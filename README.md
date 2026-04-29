@@ -133,3 +133,20 @@ La propuesta generada se puede descargar en dos formatos:
 ## Licencia
 
 MIT
+
+---
+
+## Autores
+
+Este repositorio fue creado por los siguientes ingenieros pertenecientes al grupo de investigación **INPROTI** de la **Corporación Universitaria del Huila — Corhuila**:
+
+| Nombre | Correo |
+|--------|--------|
+| Ing. Julian Andres Quimbayo Castro | julian.quimbayo@corhuila.edu.co |
+| Ing. Alvaro Hernan Alarcon Lopez | alvaro.alarcon@corhuila.edu.co |
+| Ing. Jose Miguel Llanos Mosquera | jmllanosm@corhuila.edu.co |
+
+<p align="center">
+  <strong>Grupo de Investigación INPROTI</strong><br/>
+  Corporación Universitaria del Huila — Corhuila
+</p>
