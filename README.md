@@ -8,6 +8,14 @@ Aplicación web que genera propuestas comerciales de marketing personalizadas us
 
 ---
 
+## Demo
+
+<p align="center">
+  <img src="img/image.png" alt="Demo de la aplicación" width="100%"/>
+</p>
+
+---
+
 ## Arquitectura de Agentes
 
 | Agente | Rol | Framework |
