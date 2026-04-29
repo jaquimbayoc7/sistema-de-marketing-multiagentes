@@ -1,0 +1,244 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="1000" height="680" font-family="Segoe UI, Arial, sans-serif">
+
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f3460;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="agentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#16213e;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="inputGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2f4b;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0d2137;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="outputGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1b4332;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0d2b1e;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="claudeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a1b6d;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#2d0f42;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="stateGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1e3a5f;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4a9eff"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#52d68a"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#b388ff"/>
+    </marker>
+    <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#90a4ae"/>
+    </marker>
+  </defs>
+
+  <!-- Main background -->
+  <rect width="1000" height="680" fill="url(#bgGrad)" rx="16"/>
+
+  <!-- Title -->
+  <text x="500" y="42" text-anchor="middle" fill="white" font-size="22" font-weight="700" letter-spacing="1">Sistema de Marketing Multiagentes</text>
+  <text x="500" y="64" text-anchor="middle" fill="#90caf9" font-size="13">LangGraph · Claude (Anthropic) · Streamlit</text>
+  <line x1="80" y1="76" x2="920" y2="76" stroke="#4a9eff" stroke-width="1" opacity="0.4"/>
+
+  <!-- ═══════════════ INPUT BLOCK ═══════════════ -->
+  <rect x="30" y="92" width="170" height="490" rx="12" fill="url(#inputGrad)" stroke="#4a9eff" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="30" y="92" width="170" height="36" rx="12" fill="#1e4976"/>
+  <rect x="30" y="116" width="170" height="12" fill="#1e4976"/>
+  <text x="115" y="116" text-anchor="middle" fill="#90caf9" font-size="12" font-weight="700">📋  INPUTS</text>
+  <text x="115" y="135" text-anchor="middle" fill="#64b5f6" font-size="10">Streamlit UI</text>
+
+  <!-- Input fields -->
+  <rect x="44" y="150" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="166" fill="#90caf9" font-size="10">👤 Nombre del cliente</text>
+
+  <rect x="44" y="182" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="198" fill="#90caf9" font-size="10">🏢 Empresa y sector</text>
+
+  <rect x="44" y="214" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="230" fill="#90caf9" font-size="10">🎯 Público objetivo</text>
+
+  <rect x="44" y="246" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="262" fill="#90caf9" font-size="10">📣 Tipo de servicio</text>
+
+  <rect x="44" y="278" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="294" fill="#90caf9" font-size="10">💰 Presupuesto</text>
+
+  <rect x="44" y="310" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="326" fill="#90caf9" font-size="10">🗓️ Timeline</text>
+
+  <rect x="44" y="342" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="358" fill="#90caf9" font-size="10">🔑 API Key Anthropic</text>
+
+  <line x1="55" y1="380" x2="175" y2="380" stroke="#2a5f8f" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="115" y="398" text-anchor="middle" fill="#78909c" font-size="9">Datos del remitente</text>
+
+  <rect x="44" y="407" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="423" fill="#90caf9" font-size="10">🏷️ Empresa agencia</text>
+
+  <rect x="44" y="439" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="455" fill="#90caf9" font-size="10">👔 Nombre y rol</text>
+
+  <rect x="44" y="471" width="142" height="24" rx="5" fill="#0d2137" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="54" y="487" fill="#90caf9" font-size="10">📞 Contacto</text>
+
+  <!-- Generate button -->
+  <rect x="44" y="510" width="142" height="30" rx="8" fill="#1565c0" stroke="#4a9eff" stroke-width="1.5" filter="url(#glow)"/>
+  <text x="115" y="529" text-anchor="middle" fill="white" font-size="11" font-weight="700">▶  Generar Propuesta</text>
+
+  <!-- Arrow from input to state -->
+  <line x1="200" y1="337" x2="238" y2="337" stroke="#4a9eff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ═══════════════ SHARED STATE ═══════════════ -->
+  <rect x="240" y="92" width="510" height="52" rx="10" fill="url(#stateGrad)" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="6 3"/>
+  <text x="495" y="114" text-anchor="middle" fill="#90caf9" font-size="11" font-weight="700">⚙  MarketingProposalState  —  Estado Compartido LangGraph</text>
+  <text x="495" y="132" text-anchor="middle" fill="#78909c" font-size="10">client_name · client_company · market_analysis · brand_strategy · proposal_draft · final_proposal</text>
+
+  <!-- Vertical line from state down -->
+  <line x1="495" y1="144" x2="495" y2="168" stroke="#4a9eff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ═══════════════ AGENT 1 ═══════════════ -->
+  <rect x="265" y="168" width="460" height="96" rx="10" fill="url(#agentGrad)" stroke="#42a5f5" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="265" y="168" width="460" height="32" rx="10" fill="#1565c0"/>
+  <rect x="265" y="188" width="460" height="12" fill="#1565c0"/>
+  <text x="495" y="190" text-anchor="middle" fill="white" font-size="13" font-weight="700">🔍  Agente 1 — Analista de Mercado</text>
+  <text x="495" y="208" text-anchor="middle" fill="#90caf9" font-size="10">Framework: PEST + Pain-Gain-Fear</text>
+  <line x1="280" y1="214" x2="710" y2="214" stroke="#42a5f5" stroke-width="0.5" opacity="0.5"/>
+  <text x="370" y="230" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Análisis político / económico</text>
+  <text x="370" y="244" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Análisis social / tecnológico</text>
+  <text x="370" y="258" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Perfil Pain-Gain-Fear del decisor</text>
+  <text x="620" y="230" text-anchor="middle" fill="#64b5f6" font-size="9">Output →</text>
+  <rect x="636" y="218" width="82" height="14" rx="4" fill="#0d47a1" stroke="#42a5f5" stroke-width="1"/>
+  <text x="677" y="229" text-anchor="middle" fill="#90caf9" font-size="9">market_analysis</text>
+  <text x="620" y="248" text-anchor="middle" fill="#64b5f6" font-size="9">Modelo →</text>
+  <rect x="636" y="236" width="82" height="14" rx="4" fill="#3e1f6d" stroke="#9c27b0" stroke-width="1"/>
+  <text x="677" y="247" text-anchor="middle" fill="#ce93d8" font-size="9">claude-haiku-4-5</text>
+  <!-- Arrow agent1 to agent2 -->
+  <line x1="495" y1="264" x2="495" y2="284" stroke="#4a9eff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ═══════════════ AGENT 2 ═══════════════ -->
+  <rect x="265" y="284" width="460" height="96" rx="10" fill="url(#agentGrad)" stroke="#26c6da" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="265" y="284" width="460" height="32" rx="10" fill="#00695c"/>
+  <rect x="265" y="304" width="460" height="12" fill="#00695c"/>
+  <text x="495" y="306" text-anchor="middle" fill="white" font-size="13" font-weight="700">📊  Agente 2 — Estratega de Marca</text>
+  <text x="495" y="324" text-anchor="middle" fill="#80cbc4" font-size="10">Framework: Messaging Hierarchy Canvas</text>
+  <line x1="280" y1="330" x2="710" y2="330" stroke="#26c6da" stroke-width="0.5" opacity="0.5"/>
+  <text x="370" y="346" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Core Message y Proof Points</text>
+  <text x="370" y="360" text-anchor="middle" fill="#b0bec5" font-size="9.5">• KPIs de éxito del negocio</text>
+  <text x="370" y="374" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Manejo de objeciones y tono</text>
+  <text x="620" y="346" text-anchor="middle" fill="#4dd0e1" font-size="9">Output →</text>
+  <rect x="636" y="334" width="82" height="14" rx="4" fill="#004d40" stroke="#26c6da" stroke-width="1"/>
+  <text x="677" y="345" text-anchor="middle" fill="#80cbc4" font-size="9">brand_strategy</text>
+  <text x="620" y="364" text-anchor="middle" fill="#4dd0e1" font-size="9">Modelo →</text>
+  <rect x="636" y="352" width="82" height="14" rx="4" fill="#3e1f6d" stroke="#9c27b0" stroke-width="1"/>
+  <text x="677" y="363" text-anchor="middle" fill="#ce93d8" font-size="9">claude-haiku-4-5</text>
+  <!-- Arrow agent2 to agent3 -->
+  <line x1="495" y1="380" x2="495" y2="400" stroke="#4a9eff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ═══════════════ AGENT 3 ═══════════════ -->
+  <rect x="265" y="400" width="460" height="96" rx="10" fill="url(#agentGrad)" stroke="#ffa726" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="265" y="400" width="460" height="32" rx="10" fill="#e65100"/>
+  <rect x="265" y="420" width="460" height="12" fill="#e65100"/>
+  <text x="495" y="422" text-anchor="middle" fill="white" font-size="13" font-weight="700">✍️  Agente 3 — Redactor Comercial</text>
+  <text x="495" y="440" text-anchor="middle" fill="#ffcc80" font-size="10">Framework: StoryBrand B2B adaptado</text>
+  <line x1="280" y1="446" x2="710" y2="446" stroke="#ffa726" stroke-width="0.5" opacity="0.5"/>
+  <text x="370" y="462" text-anchor="middle" fill="#b0bec5" font-size="9.5">• 11 secciones de propuesta formal</text>
+  <text x="370" y="476" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Narrativa StoryBrand (Personaje → CTA)</text>
+  <text x="370" y="490" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Tono consultivo, 850+ palabras</text>
+  <text x="620" y="462" text-anchor="middle" fill="#ffb74d" font-size="9">Output →</text>
+  <rect x="636" y="450" width="82" height="14" rx="4" fill="#bf360c" stroke="#ffa726" stroke-width="1"/>
+  <text x="677" y="461" text-anchor="middle" fill="#ffcc80" font-size="9">proposal_draft</text>
+  <text x="620" y="480" text-anchor="middle" fill="#ffb74d" font-size="9">Modelo →</text>
+  <rect x="636" y="468" width="82" height="14" rx="4" fill="#3e1f6d" stroke="#9c27b0" stroke-width="1"/>
+  <text x="677" y="479" text-anchor="middle" fill="#ce93d8" font-size="9">claude-haiku-4-5</text>
+  <!-- Arrow agent3 to agent4 -->
+  <line x1="495" y1="496" x2="495" y2="516" stroke="#4a9eff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ═══════════════ AGENT 4 ═══════════════ -->
+  <rect x="265" y="516" width="460" height="96" rx="10" fill="url(#agentGrad)" stroke="#ec407a" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="265" y="516" width="460" height="32" rx="10" fill="#880e4f"/>
+  <rect x="265" y="536" width="460" height="12" fill="#880e4f"/>
+  <text x="495" y="538" text-anchor="middle" fill="white" font-size="13" font-weight="700">✅  Agente 4 — Editor Senior</text>
+  <text x="495" y="556" text-anchor="middle" fill="#f48fb1" font-size="10">Framework: Rúbrica PACT</text>
+  <line x1="280" y1="562" x2="710" y2="562" stroke="#ec407a" stroke-width="0.5" opacity="0.5"/>
+  <text x="370" y="578" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Personalización · Accionabilidad</text>
+  <text x="370" y="592" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Claridad · Tono consultivo</text>
+  <text x="370" y="606" text-anchor="middle" fill="#b0bec5" font-size="9.5">• Propuesta final lista para enviar</text>
+  <text x="620" y="578" text-anchor="middle" fill="#f06292" font-size="9">Output →</text>
+  <rect x="636" y="566" width="82" height="14" rx="4" fill="#560027" stroke="#ec407a" stroke-width="1"/>
+  <text x="677" y="577" text-anchor="middle" fill="#f48fb1" font-size="9">final_proposal</text>
+  <text x="620" y="596" text-anchor="middle" fill="#f06292" font-size="9">Modelo →</text>
+  <rect x="636" y="584" width="82" height="14" rx="4" fill="#3e1f6d" stroke="#9c27b0" stroke-width="1"/>
+  <text x="677" y="595" text-anchor="middle" fill="#ce93d8" font-size="9">claude-haiku-4-5</text>
+
+  <!-- Arrow from agents to output -->
+  <line x1="725" y1="337" x2="763" y2="337" stroke="#52d68a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+  <!-- ═══════════════ OUTPUT BLOCK ═══════════════ -->
+  <rect x="765" y="92" width="205" height="490" rx="12" fill="url(#outputGrad)" stroke="#52d68a" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="765" y="92" width="205" height="36" rx="12" fill="#1b5e20"/>
+  <rect x="765" y="116" width="205" height="12" fill="#1b5e20"/>
+  <text x="867" y="116" text-anchor="middle" fill="#a5d6a7" font-size="12" font-weight="700">📤  OUTPUTS</text>
+  <text x="867" y="135" text-anchor="middle" fill="#66bb6a" font-size="10">Propuesta Comercial</text>
+
+  <!-- Output items -->
+  <rect x="779" y="152" width="177" height="60" rx="8" fill="#0d2b1e" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="867" y="173" text-anchor="middle" fill="#a5d6a7" font-size="11" font-weight="600">📄 Markdown</text>
+  <text x="867" y="190" text-anchor="middle" fill="#78909c" font-size="9">Texto estructurado con</text>
+  <text x="867" y="202" text-anchor="middle" fill="#78909c" font-size="9">formato editable</text>
+
+  <rect x="779" y="224" width="177" height="60" rx="8" fill="#0d2b1e" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="867" y="245" text-anchor="middle" fill="#a5d6a7" font-size="11" font-weight="600">📑 PDF Profesional</text>
+  <text x="867" y="262" text-anchor="middle" fill="#78909c" font-size="9">Documento con estilos</text>
+  <text x="867" y="274" text-anchor="middle" fill="#78909c" font-size="9">corporativos (ReportLab)</text>
+
+  <line x1="779" y1="298" x2="956" y2="298" stroke="#2e7d32" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="867" y="314" text-anchor="middle" fill="#78909c" font-size="10" font-weight="600">Secciones de la Propuesta</text>
+
+  <text x="785" y="332" fill="#66bb6a" font-size="9.5">1. Encabezado formal</text>
+  <text x="785" y="348" fill="#66bb6a" font-size="9.5">2. Resumen Ejecutivo</text>
+  <text x="785" y="364" fill="#66bb6a" font-size="9.5">3. Análisis del cliente</text>
+  <text x="785" y="380" fill="#66bb6a" font-size="9.5">4. Solución propuesta</text>
+  <text x="785" y="396" fill="#66bb6a" font-size="9.5">5. Por qué esta estrategia</text>
+  <text x="785" y="412" fill="#66bb6a" font-size="9.5">6. Metodología y fases</text>
+  <text x="785" y="428" fill="#66bb6a" font-size="9.5">7. Entregables y KPIs</text>
+  <text x="785" y="444" fill="#66bb6a" font-size="9.5">8. Cronograma</text>
+  <text x="785" y="460" fill="#66bb6a" font-size="9.5">9. Inversión y pagos</text>
+  <text x="785" y="476" fill="#66bb6a" font-size="9.5">10. Próximos pasos</text>
+  <text x="785" y="492" fill="#66bb6a" font-size="9.5">11. Cierre y firma</text>
+
+  <!-- Download buttons -->
+  <rect x="779" y="510" width="84" height="28" rx="6" fill="#1b5e20" stroke="#52d68a" stroke-width="1.5"/>
+  <text x="821" y="528" text-anchor="middle" fill="white" font-size="10" font-weight="600">⬇ .md</text>
+
+  <rect x="872" y="510" width="84" height="28" rx="6" fill="#1b5e20" stroke="#52d68a" stroke-width="1.5"/>
+  <text x="914" y="528" text-anchor="middle" fill="white" font-size="10" font-weight="600">⬇ .pdf</text>
+
+  <!-- ═══════════════ CLAUDE LLM BOX ═══════════════ -->
+  <rect x="265" y="628" width="460" height="38" rx="8" fill="url(#claudeGrad)" stroke="#b388ff" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="495" y="643" text-anchor="middle" fill="#ce93d8" font-size="10" font-weight="700">🤖  Claude LLM  ·  claude-haiku-4-5-20251001  (Anthropic)</text>
+  <text x="495" y="658" text-anchor="middle" fill="#9c64c8" font-size="9">Potencia los 4 agentes · max_tokens: 1500 (A1/A2) · 3500 (A3) · 4096 (A4)</text>
+
+  <!-- Dotted line connecting claude box to agents -->
+  <line x1="495" y1="612" x2="495" y2="628" stroke="#b388ff" stroke-width="1.5" stroke-dasharray="4 3"/>
+
+  <!-- Footer -->
+  <text x="500" y="672" text-anchor="middle" fill="#37474f" font-size="9">github.com/jaquimbayoc7/sistema-de-marketing-multiagentes</text>
+</svg>

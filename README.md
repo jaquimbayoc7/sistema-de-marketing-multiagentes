@@ -1,44 +1,14 @@
 # Sistema de Marketing Multiagentes
 
+<p align="center">
+  <img src="architecture.svg" alt="Arquitectura del sistema" width="100%"/>
+</p>
+
 Aplicación web que genera propuestas comerciales de marketing personalizadas usando una cadena de **4 agentes especializados** con LangGraph y Claude (Anthropic). El resultado se puede descargar en formato `.md` y `.pdf`.
 
 ---
 
-## Demo
-
-![Interfaz Streamlit](agente-marketing-multiagente-langgraph.html)
-
----
-
 ## Arquitectura de Agentes
-
-```
-                    MarketingProposalState (estado compartido)
-                              │
-              ┌───────────────▼───────────────┐
-              │        Agente 1               │
-              │    Analista de Mercado        │
-              │  Framework PEST + Pain-Gain   │
-              └───────────────┬───────────────┘
-                              │
-              ┌───────────────▼───────────────┐
-              │        Agente 2               │
-              │   Estratega de Marca          │
-              │  Messaging Hierarchy Canvas   │
-              └───────────────┬───────────────┘
-                              │
-              ┌───────────────▼───────────────┐
-              │        Agente 3               │
-              │    Redactor Comercial         │
-              │   Propuesta draft completa    │
-              └───────────────┬───────────────┘
-                              │
-              ┌───────────────▼───────────────┐
-              │        Agente 4               │
-              │      Editor Senior            │
-              │   Revisión y propuesta final  │
-              └───────────────┴───────────────┘
-```
 
 | Agente | Rol | Framework |
 |--------|-----|-----------|
