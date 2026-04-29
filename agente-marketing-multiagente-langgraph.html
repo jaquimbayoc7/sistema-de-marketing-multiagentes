@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente Multi-Agente de Marketing con LangGraph y Claude | Ingeniería Mecatrónica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --primary-color: #1a2f4b;
+    --secondary-color: #2d5a8a;
+    --accent-color: #00d4ff;
+    --accent-orange: #ff6b35;
+    --light-bg: #f0f4f8;
+    --dark-text: #1a1a1a;
+    --border-color: #d0d0d0;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --ai-color: #d97706;
+    --ai-bg: #fffbeb;
+    --python-blue: #3776ab;
+    --lang-purple: #7c3aed;
+    --lang-bg: #f5f3ff;
+}
+body { font-family: 'Roboto', sans-serif; line-height: 1.6; color: var(--dark-text); background-color: #fff; }
+.main-header { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: white; padding: 0; }
+.top-bar { background-color: rgba(0,0,0,0.1); padding: 20px 0; text-align: center; }
+.brand-container { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.brand-name { font-size: 18px; font-weight: 500; letter-spacing: 1px; margin: 5px 0; }
+.main-nav { background-color: rgba(0,0,0,0.2); padding: 15px 0; position: sticky; top: 0; z-index: 100; }
+.main-nav ul { list-style: none; display: flex; justify-content: center; flex-wrap: wrap; gap: 0; }
+.main-nav a { color: white; text-decoration: none; padding: 10px 16px; display: block; font-size: 13px; font-weight: 500; transition: background-color 0.3s; border-bottom: 3px solid transparent; }
+.main-nav a:hover, .main-nav a.active { background-color: rgba(255,255,255,0.1); border-bottom-color: var(--accent-color); }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.main-content { padding: 50px 0; }
+section { margin-bottom: 40px; }
+h1 { color: var(--primary-color); font-size: 2.5em; margin-bottom: 20px; text-align: center; }
+h2 { color: var(--secondary-color); font-size: 2em; margin-bottom: 25px; border-left: 5px solid var(--accent-orange); padding-left: 15px; }
+h3 { color: var(--primary-color); font-size: 1.5em; margin-top: 25px; margin-bottom: 15px; }
+h4 { color: var(--secondary-color); font-size: 1.2em; margin-bottom: 10px; }
+.hero-section { background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1b1b2f 100%); color: white; padding: 60px 40px; border-radius: 10px; text-align: center; }
+.hero-section h1 { color: white; margin-bottom: 20px; }
+.lead { font-size: 1.2em; line-height: 1.8; max-width: 800px; margin: 0 auto; }
+.divider { border: none; border-top: 2px solid var(--border-color); margin: 40px 0; }
+.divider-thick { border: none; border-top: 3px solid var(--accent-color); margin: 50px 0; }
+.definition-box { background-color: #e0f7ff; border-left: 5px solid var(--secondary-color); padding: 20px; margin: 20px 0; border-radius: 5px; font-size: 1.05em; }
+.ai-box { background-color: var(--ai-bg); border-left: 5px solid var(--ai-color); padding: 20px; margin: 20px 0; border-radius: 5px; }
+.ai-box h4 { color: #92400e; margin-bottom: 10px; }
+.ai-box p, .ai-box ul, .ai-box li { color: #92400e; line-height: 1.7; }
+.ai-box ul { margin-left: 20px; }
+.ai-box li { margin-bottom: 8px; }
+.lang-box { background-color: var(--lang-bg); border-left: 5px solid var(--lang-purple); padding: 20px; margin: 20px 0; border-radius: 5px; }
+.lang-box h4 { color: #5b21b6; margin-bottom: 10px; }
+.lang-box p, .lang-box ul, .lang-box li { color: #4c1d95; line-height: 1.7; }
+.lang-box ul { margin-left: 20px; }
+.lang-box li { margin-bottom: 8px; }
+.reflection-box { background-color: #fff3cd; border-left: 5px solid var(--warning-color); padding: 20px; margin: 20px 0; border-radius: 5px; }
+.reflection-box h4 { color: #856404; margin-bottom: 10px; }
+.reflection-box p, .reflection-box ul, .reflection-box li { color: #856404; line-height: 1.7; }
+.reflection-box ul { margin-left: 20px; }
+.reflection-box li { margin-bottom: 8px; }
+.success-box { background-color: #d4edda; border-left: 5px solid var(--success-color); padding: 20px; margin: 20px 0; border-radius: 5px; }
+.success-box h4 { color: #155724; margin-bottom: 10px; }
+.success-box p, .success-box ul, .success-box li { color: #155724; line-height: 1.7; }
+.success-box ul { margin-left: 20px; }
+.success-box li { margin-bottom: 8px; color: #155724; }
+.warning-box { background-color: #f8d7da; border-left: 5px solid #dc3545; padding: 20px; margin: 20px 0; border-radius: 5px; }
+.warning-box h4 { color: #721c24; margin-bottom: 10px; }
+.warning-box p { color: #721c24; line-height: 1.7; }
+.comparison-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+.card { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+.card h3, .card h4 { color: var(--secondary-color); margin-top: 0; }
+.step-box { background-color: var(--light-bg); border-left: 4px solid var(--accent-color); padding: 20px; margin: 20px 0; border-radius: 5px; }
+.step-num { display: inline-block; background-color: var(--secondary-color); color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; margin-right: 10px; margin-bottom: 10px; }
+.step-box h4 { color: var(--secondary-color); margin-top: 0; }
+.agent-step-box { background-color: #f8f4ff; border-left: 4px solid var(--lang-purple); padding: 20px; margin: 20px 0; border-radius: 5px; }
+.agent-step-box h4 { color: #5b21b6; margin-top: 0; }
+.agent-num { display: inline-block; background-color: var(--lang-purple); color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; margin-right: 10px; margin-bottom: 10px; }
+.python-step-box { background-color: #eef4fb; border-left: 4px solid var(--python-blue); padding: 20px; margin: 20px 0; border-radius: 5px; }
+.python-step-box h4 { color: var(--python-blue); margin-top: 0; }
+.python-step-num { display: inline-block; background-color: var(--python-blue); color: white; width: 35px; height: 35px; border-radius: 50%; text-align: center; line-height: 35px; font-weight: bold; margin-right: 10px; margin-bottom: 10px; }
+.strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 30px 0; }
+.strategy-box { background-color: var(--light-bg); padding: 20px; border-radius: 8px; border-left: 4px solid var(--secondary-color); }
+.strategy-box h5 { color: var(--secondary-color); margin-bottom: 15px; }
+.strategy-box ul { list-style-position: inside; margin-left: 10px; }
+.strategy-box li { margin-bottom: 8px; }
+.table-responsive { overflow-x: auto; margin: 30px 0; }
+.styled-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.styled-table thead tr { background-color: var(--secondary-color); color: white; text-align: left; font-weight: 500; }
+.styled-table th, .styled-table td { padding: 15px; border-bottom: 1px solid var(--border-color); }
+.styled-table tbody tr:hover { background-color: var(--light-bg); }
+.styled-table tbody tr:nth-child(odd) { background-color: #fafafa; }
+.tag { display: inline-block; padding: 5px 12px; margin: 5px 5px 5px 0; border-radius: 20px; font-size: 0.9em; font-weight: 500; }
+.tag-python { background-color: #eef4fb; color: #3776ab; }
+.tag-ai { background-color: #fef3c7; color: #92400e; }
+.tag-stream { background-color: #ede9fe; color: #5b21b6; }
+.tag-lang { background-color: #f0fdf4; color: #15803d; }
+pre { background-color: #2d2d2d; color: #f8f8f2; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 20px 0; font-family: 'Courier New', monospace; font-size: 0.95em; line-height: 1.5; position: relative; }
+code { font-family: 'Courier New', monospace; background-color: #f4f4f4; padding: 2px 6px; border-radius: 3px; color: var(--primary-color); }
+pre code { background-color: transparent; color: #f8f8f2; padding: 0; }
+.checklist { list-style: none; padding-left: 0; }
+.checklist li { padding: 10px; margin: 5px 0; background-color: var(--light-bg); border-radius: 5px; border-left: 4px solid var(--accent-color); }
+.checklist li:before { content: "✓ "; color: var(--success-color); font-weight: bold; margin-right: 10px; }
+.node-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin: 30px 0; align-items: center; }
+.node-card { text-align: center; padding: 15px; border-radius: 8px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s; }
+.node-card:hover { transform: translateY(-3px); }
+.node-card .node-icon { font-size: 36px; margin-bottom: 8px; }
+.node-card .node-name { font-weight: 700; font-size: 0.95em; color: var(--primary-color); }
+.node-card .node-desc { font-size: 0.8em; color: #666; margin-top: 4px; }
+.node-card.lang-node { border: 2px solid var(--lang-purple); background: var(--lang-bg); }
+.node-card.python-node { border: 2px solid var(--python-blue); background: #eef4fb; }
+.node-card.ai-node { border: 2px solid var(--ai-color); background: var(--ai-bg); }
+.node-arrow { display: flex; align-items: center; justify-content: center; font-size: 1.5em; color: var(--lang-purple); font-weight: bold; }
+.terminal-output { background-color: #1e1e1e; color: #4ec9b0; padding: 20px; border-radius: 8px; margin: 20px 0; font-family: 'Courier New', monospace; font-size: 0.9em; line-height: 1.6; border: 1px solid #333; }
+.terminal-output .prompt { color: #569cd6; }
+.terminal-output .output { color: #d4d4d4; }
+.terminal-output .success { color: #4ec9b0; }
+.terminal-output .warning { color: #dcdcaa; }
+.file-tree { background-color: #1e1e1e; color: #d4d4d4; padding: 20px; border-radius: 8px; margin: 20px 0; font-family: 'Courier New', monospace; font-size: 0.9em; line-height: 1.8; }
+.file-tree .folder { color: #dcdcaa; }
+.file-tree .file { color: #9cdcfe; }
+.main-footer { background: var(--primary-color); color: white; text-align: center; padding: 40px 0; margin-top: 50px; }
+.main-footer p { margin: 8px 0; font-size: 0.95em; }
+.main-footer ul { list-style: none; margin-top: 20px; }
+.main-footer li { margin: 8px 0; }
+.main-footer a { color: #fff9e6; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+.main-footer a:hover { color: var(--accent-color); }
+#scrollTopBtn { display: none; position: fixed; bottom: 20px; right: 20px; background-color: var(--lang-purple); color: white; border: none; padding: 15px 20px; font-size: 18px; border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 99; transition: background-color 0.3s; }
+#scrollTopBtn:hover { background-color: var(--accent-orange); }
+ul, ol { margin: 15px 0; margin-left: 30px; }
+li { margin: 8px 0; line-height: 1.7; }
+a { color: var(--secondary-color); text-decoration: none; transition: color 0.3s; }
+a:hover { color: var(--accent-orange); text-decoration: underline; }
+.architecture-svg { text-align: center; margin: 40px 0; }
+.architecture-svg svg { max-width: 100%; height: auto; }
+@media (max-width: 768px) {
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.5em; }
+    .hero-section { padding: 40px 20px; }
+    .main-nav ul { flex-direction: column; }
+    .main-nav a { padding: 10px 15px; font-size: 12px; }
+    .comparison-cards, .strategy-grid { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr 1fr; }
+}
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="top-bar">
+        <div class="container brand-container">
+            <img src="https://raw.githubusercontent.com/code-corhuila/material-mineria-datos/b3725d694125ab35294ddfe415a327bc1445d32c/01-week/01-session/LOGO%20CORHUILA%20BLANCO%20PNG%20(2).png" alt="Logo Corhuila" style="max-width:120px;height:auto;margin-bottom:15px;">
+            <div class="brand-name">Corporación Universitaria del Huila - CORHUILA</div>
+            <div class="brand-name">Programa: Ingeniería Mecatrónica</div>
+        </div>
+    </div>
+    <nav class="main-nav">
+        <div class="container">
+            <ul>
+                <li><a href="#inicio" class="active">Inicio</a></li>
+                <li><a href="#requisitos">Requisitos</a></li>
+                <li><a href="#conceptos">Conceptos</a></li>
+                <li><a href="#entorno">Entorno</a></li>
+                <li><a href="#api-key">API Key</a></li>
+                <li><a href="#estructura">Estructura</a></li>
+                <li><a href="#claude-config">.claude/</a></li>
+                <li><a href="#estado">Estado</a></li>
+                <li><a href="#helpers">Helpers</a></li>
+                <li><a href="#agente1">Agente 1</a></li>
+                <li><a href="#agente2">Agente 2</a></li>
+                <li><a href="#agente3">Agente 3</a></li>
+                <li><a href="#agente4">Agente 4</a></li>
+                <li><a href="#grafo">Grafo</a></li>
+                <li><a href="#ui">Interfaz</a></li>
+                <li><a href="#ejecucion">Ejecución</a></li>
+                <li><a href="#troubleshooting">Soluciones</a></li>
+                <li><a href="#reto">Reto</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main class="main-content">
+<div class="container">
+
+<!-- ===== INICIO ===== -->
+<section id="inicio">
+    <div class="hero-section">
+        <h1>🎯 Generador de Propuestas de Marketing con Multi-Agentes IA</h1>
+        <p class="lead">
+            Construye una <strong>aplicación web multi-agente</strong> con Python que orquesta
+            4 agentes de Inteligencia Artificial especializados usando <strong>LangGraph</strong> y <strong>Claude de Anthropic</strong>
+            para generar propuestas comerciales de marketing profesionales, exportables en PDF y Markdown.
+            Todo visualizado en tiempo real con <strong>Streamlit</strong>.
+        </p>
+        <p style="margin-top:20px;font-size:1.1em;">
+            <span class="tag tag-python">🐍 Python 3.10+</span>
+            <span class="tag tag-ai">🤖 Claude Haiku</span>
+            <span class="tag tag-stream">⚡ Streamlit</span>
+            <span class="tag tag-lang">🔗 LangGraph</span>
+        </p>
+    </div>
+    <p style="margin-top:30px;font-size:1.1em;text-align:center;">
+        <strong>Nivel:</strong> Intermedio-Avanzado &nbsp;|&nbsp;
+        <strong>Archivo principal:</strong> app.py (1 archivo) &nbsp;|&nbsp;
+        <strong>Duración estimada:</strong> 90-120 minutos
+    </p>
+
+    <!-- SVG Arquitectura -->
+    <div class="architecture-svg">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 480" font-family="Roboto,Arial,sans-serif">
+            <defs>
+                <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f5f3ff;stop-opacity:1"/>
+                    <stop offset="100%" style="stop-color:#ede9fe;stop-opacity:1"/>
+                </linearGradient>
+                <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1"/>
+                    <stop offset="100%" style="stop-color:#5b21b6;stop-opacity:1"/>
+                </linearGradient>
+                <linearGradient id="darkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0f3460;stop-opacity:1"/>
+                    <stop offset="100%" style="stop-color:#16213e;stop-opacity:1"/>
+                </linearGradient>
+                <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#27ae60;stop-opacity:1"/>
+                    <stop offset="100%" style="stop-color:#1e8449;stop-opacity:1"/>
+                </linearGradient>
+                <filter id="sh2"><feDropShadow dx="2" dy="3" stdDeviation="4" flood-opacity="0.15"/></filter>
+                <marker id="arrowP" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0,10 3.5,0 7" fill="#7c3aed"/>
+                </marker>
+            </defs>
+            <rect width="1100" height="480" rx="16" fill="url(#bg2)"/>
+            <text x="550" y="38" text-anchor="middle" font-size="21" font-weight="700" fill="#4c1d95">Pipeline Multi-Agente: Flujo de Datos</text>
+            <text x="550" y="60" text-anchor="middle" font-size="13" fill="#6d28d9">Estado compartido (MarketingProposalState) fluye por los 4 agentes en cadena</text>
+
+            <!-- Estado compartido - caja central superior -->
+            <g filter="url(#sh2)">
+                <rect x="370" y="78" width="360" height="52" rx="10" fill="url(#darkGrad)"/>
+                <text x="550" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="white">📦 MarketingProposalState (TypedDict)</text>
+                <text x="550" y="120" text-anchor="middle" font-size="11" fill="#a8d8ea">api_key · client_* · service_* · market_analysis · brand_strategy · proposal_draft · final_proposal</text>
+            </g>
+
+            <!-- Flecha estado a agente1 -->
+            <line x1="370" y1="104" x2="180" y2="180" stroke="#7c3aed" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowP)"/>
+
+            <!-- Agente 1 -->
+            <g filter="url(#sh2)">
+                <rect x="20" y="185" width="200" height="130" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/>
+                <rect x="20" y="185" width="200" height="38" rx="10" fill="url(#purpleGrad)"/>
+                <rect x="20" y="211" width="200" height="12" fill="url(#purpleGrad)"/>
+                <text x="120" y="210" text-anchor="middle" font-size="12" font-weight="700" fill="white">🔍 Agente 1: Analista</text>
+            </g>
+            <text x="35" y="244" font-size="10" fill="#333" font-weight="600">Framework: PEST +</text>
+            <text x="35" y="260" font-size="10" fill="#555">Pain-Gain-Fear</text>
+            <text x="35" y="278" font-size="10" fill="#333" font-weight="600">Output:</text>
+            <text x="35" y="294" font-size="10" fill="#7c3aed">market_analysis</text>
+            <text x="35" y="308" font-size="9" fill="#888">max_tokens: 1500</text>
+
+            <!-- Flecha 1→2 -->
+            <line x1="220" y1="250" x2="280" y2="250" stroke="#7c3aed" stroke-width="3" marker-end="url(#arrowP)"/>
+
+            <!-- Agente 2 -->
+            <g filter="url(#sh2)">
+                <rect x="285" y="185" width="200" height="130" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/>
+                <rect x="285" y="185" width="200" height="38" rx="10" fill="url(#purpleGrad)"/>
+                <rect x="285" y="211" width="200" height="12" fill="url(#purpleGrad)"/>
+                <text x="385" y="210" text-anchor="middle" font-size="12" font-weight="700" fill="white">📊 Agente 2: Estratega</text>
+            </g>
+            <text x="300" y="244" font-size="10" fill="#333" font-weight="600">Framework: Messaging</text>
+            <text x="300" y="260" font-size="10" fill="#555">Hierarchy Canvas</text>
+            <text x="300" y="278" font-size="10" fill="#333" font-weight="600">Output:</text>
+            <text x="300" y="294" font-size="10" fill="#7c3aed">brand_strategy</text>
+            <text x="300" y="308" font-size="9" fill="#888">max_tokens: 1500</text>
+
+            <!-- Flecha 2→3 -->
+            <line x1="485" y1="250" x2="545" y2="250" stroke="#7c3aed" stroke-width="3" marker-end="url(#arrowP)"/>
+
+            <!-- Agente 3 -->
+            <g filter="url(#sh2)">
+                <rect x="550" y="185" width="200" height="130" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/>
+                <rect x="550" y="185" width="200" height="38" rx="10" fill="url(#purpleGrad)"/>
+                <rect x="550" y="211" width="200" height="12" fill="url(#purpleGrad)"/>
+                <text x="650" y="210" text-anchor="middle" font-size="12" font-weight="700" fill="white">✍️ Agente 3: Redactor</text>
+            </g>
+            <text x="565" y="244" font-size="10" fill="#333" font-weight="600">Framework: StoryBrand</text>
+            <text x="565" y="260" font-size="10" fill="#555">11 secciones, 850+ palabras</text>
+            <text x="565" y="278" font-size="10" fill="#333" font-weight="600">Output:</text>
+            <text x="565" y="294" font-size="10" fill="#7c3aed">proposal_draft</text>
+            <text x="565" y="308" font-size="9" fill="#888">max_tokens: 3500</text>
+
+            <!-- Flecha 3→4 -->
+            <line x1="750" y1="250" x2="810" y2="250" stroke="#7c3aed" stroke-width="3" marker-end="url(#arrowP)"/>
+
+            <!-- Agente 4 -->
+            <g filter="url(#sh2)">
+                <rect x="815" y="185" width="200" height="130" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/>
+                <rect x="815" y="185" width="200" height="38" rx="10" fill="url(#purpleGrad)"/>
+                <rect x="815" y="211" width="200" height="12" fill="url(#purpleGrad)"/>
+                <text x="915" y="210" text-anchor="middle" font-size="12" font-weight="700" fill="white">✅ Agente 4: Editor</text>
+            </g>
+            <text x="830" y="244" font-size="10" fill="#333" font-weight="600">Framework: PACT Rubric</text>
+            <text x="830" y="260" font-size="10" fill="#555">Personaliz. · Accion. · Claridad · Tono</text>
+            <text x="830" y="278" font-size="10" fill="#333" font-weight="600">Output:</text>
+            <text x="830" y="294" font-size="10" fill="#7c3aed">final_proposal</text>
+            <text x="830" y="308" font-size="9" fill="#888">max_tokens: 4096</text>
+
+            <!-- Resultado final -->
+            <g filter="url(#sh2)">
+                <rect x="240" y="370" width="620" height="65" rx="10" fill="white" stroke="#27ae60" stroke-width="2"/>
+                <rect x="240" y="370" width="620" height="35" rx="10" fill="url(#greenGrad)"/>
+                <rect x="240" y="393" width="620" height="12" fill="url(#greenGrad)"/>
+                <text x="550" y="393" text-anchor="middle" font-size="14" font-weight="700" fill="white">✅ Propuesta Generada → Streamlit UI</text>
+            </g>
+            <text x="270" y="420" font-size="11" fill="#555">📄 Vista Formateada (Markdown)</text>
+            <text x="470" y="420" font-size="11" fill="#555">📝 Texto Plano (editable)</text>
+            <text x="670" y="420" font-size="11" fill="#555">⬇️ Descargar .md y .pdf</text>
+
+            <!-- Flecha agente4 a resultado -->
+            <line x1="915" y1="315" x2="730" y2="370" stroke="#27ae60" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowP)"/>
+        </svg>
+    </div>
+
+    <h3>🎓 ¿Qué Aprenderás?</h3>
+    <div class="strategy-grid">
+        <div class="strategy-box">
+            <h5>🔗 LangGraph: Grafos de Agentes</h5>
+            <p>Construir un grafo de estados donde múltiples agentes trabajan en cadena, pasando un estado compartido entre ellos.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>🤖 Prompts Multi-Rol con Claude</h5>
+            <p>Diseñar System Prompts y Human Messages especializados para que cada agente tenga un rol único y no solapado.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>⚡ Interfaces con Streamlit</h5>
+            <p>Crear aplicaciones web interactivas con formularios, progreso en tiempo real y botones de descarga.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>📄 Generación de PDFs con ReportLab</h5>
+            <p>Convertir texto Markdown en documentos PDF profesionales con estilos corporativos personalizados.</p>
+        </div>
+    </div>
+
+    <h3>🔄 Flujo del Pipeline — 4 Agentes en Cadena</h3>
+    <div class="node-grid">
+        <div class="node-card lang-node">
+            <div class="node-icon">🔍</div>
+            <div class="node-name">Analista de Mercado</div>
+            <div class="node-desc">PEST + Pain-Gain-Fear</div>
+        </div>
+        <div class="node-arrow">→</div>
+        <div class="node-card lang-node">
+            <div class="node-icon">📊</div>
+            <div class="node-name">Estratega de Marca</div>
+            <div class="node-desc">Messaging Canvas</div>
+        </div>
+        <div class="node-arrow">→</div>
+        <div class="node-card lang-node">
+            <div class="node-icon">✍️</div>
+            <div class="node-name">Redactor Comercial</div>
+            <div class="node-desc">StoryBrand (11 secciones)</div>
+        </div>
+        <div class="node-arrow">→</div>
+        <div class="node-card lang-node">
+            <div class="node-icon">✅</div>
+            <div class="node-name">Editor Senior</div>
+            <div class="node-desc">Rúbrica PACT</div>
+        </div>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== REQUISITOS ===== -->
+<section id="requisitos">
+    <h2>Requisitos Previos</h2>
+    <div class="strategy-grid">
+        <div class="strategy-box">
+            <h5>🐍 Python 3.10+</h5>
+            <p>Instalado y en PATH. Verificar con <code>python --version</code>.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>💻 Visual Studio Code</h5>
+            <p>Con la extensión <strong>Python</strong> de Microsoft instalada.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>🔑 API Key de Anthropic</h5>
+            <p>Cuenta activa en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> con créditos.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>📦 pip actualizado</h5>
+            <p>Verificar con <code>pip --version</code>. Actualizar con <code>pip install --upgrade pip</code>.</p>
+        </div>
+    </div>
+    <div class="step-box">
+        <span class="step-num">✓</span>
+        <h4>Verificar Python desde VS Code</h4>
+        <p>Abre la terminal integrada con <code>Ctrl + `</code> y ejecuta:</p>
+<pre><code>python --version
+# Resultado: Python 3.10.x o superior
+
+pip --version
+# Resultado: pip 24.x.x</code></pre>
+    </div>
+    <h3>✅ Checklist Inicial</h3>
+    <ul class="checklist">
+        <li>Python 3.10 o superior instalado</li>
+        <li>VS Code con extensión Python activa</li>
+        <li>API Key de Anthropic disponible</li>
+        <li>Conexión a internet para instalar paquetes</li>
+    </ul>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== CONCEPTOS ===== -->
+<section id="conceptos">
+    <h2>Conceptos Clave</h2>
+
+    <div class="definition-box">
+        <h4>🤖 ¿Qué es un Sistema Multi-Agente?</h4>
+        <p>Un sistema multi-agente es una arquitectura donde <strong>múltiples programas de IA especializados</strong> colaboran para resolver un problema complejo. En lugar de un único prompt gigante, cada agente tiene un rol específico, un contexto acotado y un output bien definido. La especialización produce resultados superiores a los de un solo agente generalista.</p>
+    </div>
+
+    <h3>📐 Un Solo Agente vs. Multi-Agente</h3>
+    <div class="comparison-cards">
+        <div class="card">
+            <h4>❌ Un Solo Prompt</h4>
+            <ul>
+                <li>Prompt enorme y difícil de mantener</li>
+                <li>El modelo mezcla análisis, estrategia y escritura</li>
+                <li>Calidad inconsistente entre secciones</li>
+                <li>Difícil de depurar (¿qué parte falló?)</li>
+                <li>Sin especialización por tarea</li>
+            </ul>
+        </div>
+        <div class="card" style="border-color:var(--lang-purple);border-width:2px;">
+            <h4>✅ Multi-Agente con LangGraph</h4>
+            <ul>
+                <li>Cada agente con rol y framework propio</li>
+                <li>Outputs intermedios visibles e inspeccionables</li>
+                <li>Calidad consistente por especialización</li>
+                <li>Fácil de depurar agente por agente</li>
+                <li>Fácil de ampliar agregando nuevos agentes</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="lang-box">
+        <h4>🔗 ¿Qué es LangGraph?</h4>
+        <p>LangGraph es una librería de LangChain que permite construir aplicaciones de IA como <strong>grafos de estados</strong>. Un grafo tiene <em>nodos</em> (agentes o funciones) y <em>edges</em> (conexiones que determinan el flujo). El estado es un <code>TypedDict</code> que se pasa de nodo en nodo, y cada nodo puede leer todo el estado pero solo escribe su propia clave de output.</p>
+        <ul>
+            <li><strong>StateGraph:</strong> El grafo que contiene todos los nodos</li>
+            <li><strong>add_node():</strong> Registra una función Python como nodo del grafo</li>
+            <li><strong>add_edge():</strong> Define la conexión (flujo) entre dos nodos</li>
+            <li><strong>set_entry_point():</strong> Define cuál es el primer nodo en ejecutarse</li>
+            <li><strong>compile():</strong> Congela el grafo y lo prepara para ejecutar</li>
+            <li><strong>graph.stream():</strong> Ejecuta el grafo y va emitiendo los resultados de cada nodo</li>
+        </ul>
+    </div>
+
+    <div class="ai-box">
+        <h4>🤖 ¿Por qué Claude Haiku para este proyecto?</h4>
+        <p>Usamos <code>claude-haiku-4-5-20251001</code> porque:</p>
+        <ul>
+            <li><strong>Velocidad:</strong> Es el modelo más rápido de Anthropic — ideal para pipelines de múltiples llamadas</li>
+            <li><strong>Costo:</strong> Significativamente más económico que Sonnet u Opus</li>
+            <li><strong>Suficiente calidad:</strong> Para propuestas de marketing estructuradas, Haiku produce resultados excelentes</li>
+            <li><strong>LangChain compatible:</strong> <code>langchain-anthropic</code> lo integra directamente</li>
+        </ul>
+    </div>
+
+    <h3>🏗️ Arquitectura del Estado Compartido</h3>
+    <div class="table-responsive">
+        <table class="styled-table">
+            <thead>
+                <tr><th>Clave del Estado</th><th>Quién la escribe</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>api_key, client_*, service_*</code></td><td>Streamlit (formulario)</td><td>Datos de entrada del usuario</td></tr>
+                <tr><td><code>market_analysis</code></td><td>Agente 1 (Analista)</td><td>Análisis PEST + Pain-Gain-Fear</td></tr>
+                <tr><td><code>brand_strategy</code></td><td>Agente 2 (Estratega)</td><td>Mensajes clave, KPIs, objeciones</td></tr>
+                <tr><td><code>proposal_draft</code></td><td>Agente 3 (Redactor)</td><td>Propuesta completa en Markdown (11 secciones)</td></tr>
+                <tr><td><code>final_proposal</code></td><td>Agente 4 (Editor)</td><td>Versión pulida y lista para enviar</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== ENTORNO ===== -->
+<section id="entorno">
+    <h2>Configurar el Entorno de Desarrollo</h2>
+
+    <div class="step-box">
+        <span class="step-num">1</span>
+        <h4>Crear la carpeta del proyecto</h4>
+<pre><code>mkdir agente-marketing
+cd agente-marketing</code></pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">2</span>
+        <h4>Abrir en VS Code</h4>
+<pre><code>code .</code></pre>
+        <p>O usa el menú: <strong>File → Open Folder → selecciona "agente-marketing"</strong></p>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">3</span>
+        <h4>Crear entorno virtual</h4>
+<pre><code>python -m venv venv</code></pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">4</span>
+        <h4>Activar el entorno virtual</h4>
+<pre><code># Windows PowerShell
+.\venv\Scripts\Activate.ps1
+
+# Windows CMD
+.\venv\Scripts\activate.bat</code></pre>
+        <p>Verás <code>(venv)</code> al inicio del prompt cuando esté activo.</p>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">5</span>
+        <h4>Crear el archivo <code>requirements.txt</code></h4>
+        <p>Crea el archivo con este contenido:</p>
+<pre><code>anthropic>=0.40.0
+streamlit>=1.40.0
+python-dotenv>=1.0.0
+langchain>=0.3.0
+langchain-anthropic>=0.3.0
+langgraph>=0.2.0
+reportlab>=4.0.0</code></pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">6</span>
+        <h4>Instalar todas las dependencias</h4>
+<pre><code>pip install -r requirements.txt</code></pre>
+        <p>Este proceso puede tardar 2-3 minutos. Verás muchas líneas de instalación.</p>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">7</span>
+        <h4>Verificar la instalación</h4>
+<pre><code>pip list | grep -E "anthropic|streamlit|langchain|langgraph|reportlab"</code></pre>
+    </div>
+
+    <div class="success-box">
+        <h4>✅ Estructura del proyecto hasta ahora</h4>
+    </div>
+    <div class="file-tree">
+        <span class="folder">📁 agente-marketing/</span><br>
+        <span class="folder">&nbsp;&nbsp;📁 venv/</span><br>
+        <span class="file">&nbsp;&nbsp;&nbsp;&nbsp;... (entorno virtual)</span><br>
+        <span class="file">&nbsp;&nbsp;📄 requirements.txt</span>
+    </div>
+
+    <div class="reflection-box">
+        <h4>💡 ¿Por qué tantas librerías?</h4>
+        <p>Cada librería tiene un rol específico: <code>anthropic</code> = comunicación con Claude, <code>langchain-anthropic</code> = integración LangChain-Claude, <code>langchain</code> = mensajes estandarizados (HumanMessage, SystemMessage), <code>langgraph</code> = orquestación del grafo, <code>streamlit</code> = interfaz web, <code>reportlab</code> = generación PDF, <code>python-dotenv</code> = variables de entorno desde archivo .env.</p>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== API KEY ===== -->
+<section id="api-key">
+    <h2>Configurar la API Key de Anthropic</h2>
+
+    <div class="step-box">
+        <span class="step-num">1</span>
+        <h4>Obtener tu API Key</h4>
+        <p>Ve a <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com/settings/keys</a> y copia tu clave.</p>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">2</span>
+        <h4>Crear el archivo <code>.env</code></h4>
+        <p>En la raíz del proyecto crea un archivo llamado exactamente <code>.env</code> (con punto al inicio):</p>
+<pre><code>ANTHROPIC_API_KEY=sk-ant-api03-TU_CLAVE_AQUI</code></pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">3</span>
+        <h4>Crear el archivo <code>.env.example</code> para control de versiones</h4>
+<pre><code>ANTHROPIC_API_KEY=sk-ant-api03-REEMPLAZA_CON_TU_CLAVE</code></pre>
+    </div>
+
+    <div class="warning-box">
+        <h4>⚠️ NUNCA subas el archivo .env a GitHub</h4>
+        <p>Crea un archivo <code>.gitignore</code> en la raíz del proyecto con estas líneas:</p>
+    </div>
+<pre><code>venv/
+.env
+__pycache__/
+*.pyc
+.streamlit/</code></pre>
+
+    <div class="ai-box">
+        <h4>🤖 API Key en la app: doble mecanismo de seguridad</h4>
+        <p>Nuestra app acepta la clave de dos formas: desde el archivo <code>.env</code> (automático al iniciar), o ingresada manualmente en la barra lateral de Streamlit. Esto es importante porque cuando la app está en producción, el usuario puede ingresar su propia clave sin modificar el código.</p>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== ESTRUCTURA DEL PROYECTO ===== -->
+<section id="estructura">
+    <h2>Estructura del Proyecto</h2>
+    <p>Antes de escribir código, es importante conocer cómo quedará organizado el proyecto al final. Solo necesitas <strong>crear un archivo</strong> (<code>app.py</code>) — el resto lo genera el sistema automáticamente.</p>
+
+    <div class="file-tree">
+<span class="folder">📁 agente-marketing/</span>          <span style="color:#6a9955;">← Carpeta raíz del proyecto</span><br>
+<span class="folder">&nbsp;&nbsp;📁 venv/</span>                     <span style="color:#6a9955;">← Entorno virtual Python (creado con python -m venv)</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;...</span><br>
+<span class="folder">&nbsp;&nbsp;📁 .claude/</span>                  <span style="color:#6a9955;">← Configuración de Claude Code para el proyecto</span><br>
+<span class="folder">&nbsp;&nbsp;&nbsp;&nbsp;📁 agents/</span>              <span style="color:#6a9955;">← Especificación de cada uno de los 4 agentes</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 market-analyst.md</span>   <span style="color:#6a9955;">← Rol, framework PEST y criterios del Analista</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 brand-strategist.md</span><span style="color:#6a9955;">← Messaging Canvas y criterios del Estratega</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 proposal-writer.md</span>  <span style="color:#6a9955;">← StoryBrand, 11 secciones y criterios del Redactor</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 editor.md</span>           <span style="color:#6a9955;">← Rúbrica PACT y checklist del Editor</span><br>
+<span class="folder">&nbsp;&nbsp;&nbsp;&nbsp;📁 commands/</span>            <span style="color:#6a9955;">← Comandos slash personalizados de Claude Code</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 review-proposal.md</span>  <span style="color:#6a9955;">← Comando /review-proposal (auditoría de calidad)</span><br>
+<span class="folder">&nbsp;&nbsp;&nbsp;&nbsp;📁 rules/</span>               <span style="color:#6a9955;">← Convenciones de código y desarrollo de agentes</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 agents.md</span>           <span style="color:#6a9955;">← Principios, estructura y tabla de tokens por agente</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 code-style.md</span>        <span style="color:#6a9955;">← PEP 8, convenciones Streamlit y gestión de errores</span><br>
+<span class="folder">&nbsp;&nbsp;&nbsp;&nbsp;📁 skills/</span>              <span style="color:#6a9955;">← Skills de dominio (QA checklist de propuestas)</span><br>
+<span class="folder">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📁 proposal-generation/</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 SKILL.md</span>        <span style="color:#6a9955;">← Checklist de calidad y anti-patrones</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;📄 settings.json</span>        <span style="color:#6a9955;">← Modelo (claude-opus-4-5), permisos y hooks</span><br>
+<span class="file">&nbsp;&nbsp;📄 app.py</span>                   <span style="color:#6a9955;">← ⭐ ARCHIVO PRINCIPAL: agentes + grafo + UI Streamlit</span><br>
+<span class="file">&nbsp;&nbsp;📄 CLAUDE.md</span>                <span style="color:#6a9955;">← Descripción del proyecto para Claude Code</span><br>
+<span class="file">&nbsp;&nbsp;📄 _check.py</span>               <span style="color:#6a9955;">← Validaciones y utilidades del proyecto</span><br>
+<span class="file">&nbsp;&nbsp;📄 _writer.py</span>              <span style="color:#6a9955;">← Helpers de generación de texto/PDF</span><br>
+<span class="file">&nbsp;&nbsp;📄 requirements.txt</span>         <span style="color:#6a9955;">← Lista de dependencias Python</span><br>
+<span class="file">&nbsp;&nbsp;📄 .env</span>                     <span style="color:#6a9955;">← API Key de Anthropic (NO subir a GitHub)</span><br>
+<span class="file">&nbsp;&nbsp;📄 .env.example</span>             <span style="color:#6a9955;">← Plantilla del .env (SÍ subir a GitHub)</span><br>
+<span class="file">&nbsp;&nbsp;📄 .gitignore</span>               <span style="color:#6a9955;">← Excluye venv/ y .env del control de versiones</span>
+    </div>
+
+    <div class="success-box">
+        <h4>✅ app.py es el archivo central, pero el proyecto tiene más archivos</h4>
+        <p><strong>Todo el código ejecutable vive en <code>app.py</code></strong> (agentes, grafo, UI). Además existen <code>_check.py</code> y <code>_writer.py</code> como utilidades, <code>CLAUDE.md</code> para describir el proyecto a Claude Code, y la carpeta <code>.claude/</code> con toda la configuración del asistente de IA.</p>
+    </div>
+
+    <h3>📋 ¿Qué hace cada archivo?</h3>
+    <div class="table-responsive">
+        <table class="styled-table">
+            <thead>
+                <tr><th>Archivo / Carpeta</th><th>Creado por</th><th>Propósito</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>app.py</code></td>
+                    <td>Tú (paso a paso en esta guía)</td>
+                    <td>Contiene todo: agentes, grafo LangGraph y UI Streamlit</td>
+                </tr>
+                <tr>
+                    <td><code>CLAUDE.md</code></td>
+                    <td>Incluido en el proyecto</td>
+                    <td>Descripción del proyecto, stack, arquitectura y comandos clave para Claude Code</td>
+                </tr>
+                <tr>
+                    <td><code>_check.py</code></td>
+                    <td>Incluido en el proyecto</td>
+                    <td>Validaciones y utilidades del proyecto (referenciado en <code>code-style.md</code>)</td>
+                </tr>
+                <tr>
+                    <td><code>_writer.py</code></td>
+                    <td>Incluido en el proyecto</td>
+                    <td>Helpers de generación de texto y PDF (referenciado en <code>code-style.md</code>)</td>
+                </tr>
+                <tr>
+                    <td><code>requirements.txt</code></td>
+                    <td>Tú (sección Entorno)</td>
+                    <td>Lista las 7 librerías necesarias para instalar con <code>pip</code></td>
+                </tr>
+                <tr>
+                    <td><code>.env</code></td>
+                    <td>Tú (sección API Key)</td>
+                    <td>Guarda tu API Key de Anthropic de forma segura</td>
+                </tr>
+                <tr>
+                    <td><code>.env.example</code></td>
+                    <td>Tú (sección API Key)</td>
+                    <td>Plantilla pública que muestra el formato sin exponer la clave real</td>
+                </tr>
+                <tr>
+                    <td><code>.gitignore</code></td>
+                    <td>Tú (sección API Key)</td>
+                    <td>Evita que <code>venv/</code> y <code>.env</code> se suban accidentalmente a GitHub</td>
+                </tr>
+                <tr>
+                    <td><code>venv/</code></td>
+                    <td>Python (comando <code>python -m venv</code>)</td>
+                    <td>Aísla las dependencias del proyecto del resto del sistema</td>
+                </tr>
+                <tr>
+                    <td><code>.claude/</code></td>
+                    <td>Incluido en el proyecto</td>
+                    <td>Configuración de Claude Code: modelo, permisos, reglas, agentes, commands y skills</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>🧩 Estructura interna de <code>app.py</code></h3>
+    <p>Dentro del único archivo <code>app.py</code>, el código está organizado en bloques claramente delimitados:</p>
+
+    <div class="file-tree">
+<span style="color:#569cd6;">📄 app.py</span><br>
+<span style="color:#6a9955;">&nbsp;&nbsp;│</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── 📦 Importaciones</span>          <span style="color:#6a9955;">← io, re, streamlit, os, anthropic, langgraph...</span><br>
+<span style="color:#6a9955;">&nbsp;&nbsp;│</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── 🗂️ MarketingProposalState</span>   <span style="color:#6a9955;">← TypedDict con todas las claves del estado compartido</span><br>
+<span style="color:#6a9955;">&nbsp;&nbsp;│</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── 🔧 _llm() · generate_pdf()</span>   <span style="color:#6a9955;">← Helpers: crear LLM y generar PDF con ReportLab</span><br>
+<span style="color:#6a9955;">&nbsp;&nbsp;│</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── 🔍 agent_market_analyst()</span>    <span style="color:#6a9955;">← Agente 1: PEST + Pain-Gain-Fear (max_tokens=1500)</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── 📊 agent_brand_strategist()</span>  <span style="color:#6a9955;">← Agente 2: Messaging Canvas (max_tokens=1500)</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── ✍️  agent_proposal_writer()</span>   <span style="color:#6a9955;">← Agente 3: StoryBrand 11 secciones (max_tokens=3500)</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── ✅ agent_editor()</span>            <span style="color:#6a9955;">← Agente 4: Rúbrica PACT (max_tokens=4096)</span><br>
+<span style="color:#6a9955;">&nbsp;&nbsp;│</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── 🔗 build_graph()</span>             <span style="color:#6a9955;">← Conecta los 4 agentes en cadena con LangGraph</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;├── 🏷️  AGENT_LABELS · OUTPUT_KEYS</span> <span style="color:#6a9955;">← Constantes para la UI de Streamlit</span><br>
+<span style="color:#6a9955;">&nbsp;&nbsp;│</span><br>
+<span style="color:#dcdcaa;">&nbsp;&nbsp;└── ⚡ Streamlit UI</span>              <span style="color:#6a9955;">← set_page_config · CSS · sidebar · formulario · lógica · descarga</span>
+    </div>
+
+    <div class="reflection-box">
+        <h4>💡 ¿Por qué todo en un solo archivo?</h4>
+        <p>Para proyectos de aprendizaje, concentrar todo en <code>app.py</code> permite entender el flujo completo de una sola lectura. En un proyecto de producción, separarías los agentes en módulos (<code>agents/analyst.py</code>, etc.), el PDF en <code>utils/pdf.py</code> y la UI en <code>ui/components.py</code>. Pero para este tutorial, la simplicidad prima.</p>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== .CLAUDE CONFIG ===== -->
+<section id="claude-config">
+    <h2>Configuración de Claude Code (.claude/)</h2>
+    <p>El proyecto incluye una carpeta <code>.claude/</code> que configura <strong>Claude Code</strong> — el asistente de programación de Anthropic — para que conozca la arquitectura del proyecto, respete convenciones de estilo, y use los agentes y skills definidos al trabajar en el código.</p>
+
+    <div class="lang-box">
+        <h4>🔗 ¿Qué es la carpeta .claude/?</h4>
+        <p>Es la carpeta de configuración local de Claude Code, equivalente a <code>.vscode/</code> o <code>.github/</code>. Contiene reglas de desarrollo, especificaciones de agentes, skills de dominio, comandos personalizados y permisos que Claude aplica automáticamente cuando trabaja en este proyecto.</p>
+    </div>
+
+    <div class="file-tree">
+<span class="folder">📁 .claude/</span><br>
+<span class="file">&nbsp;&nbsp;📄 settings.json</span>           <span style="color:#6a9955;">← Modelo, permisos allow/deny y hooks</span><br>
+<span class="folder">&nbsp;&nbsp;📁 agents/</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;📄 market-analyst.md</span>    <span style="color:#6a9955;">← Agente 1: rol, PEST+Pain-Gain-Fear, conexiones</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;📄 brand-strategist.md</span>  <span style="color:#6a9955;">← Agente 2: Messaging Canvas, KPIs, objeciones</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;📄 proposal-writer.md</span>   <span style="color:#6a9955;">← Agente 3: StoryBrand, 11 secciones obligatorias</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;📄 editor.md</span>            <span style="color:#6a9955;">← Agente 4: rúbrica PACT, checklist final</span><br>
+<span class="folder">&nbsp;&nbsp;📁 commands/</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;📄 review-proposal.md</span>   <span style="color:#6a9955;">← /review-proposal: auditoría de calidad con SKILL.md</span><br>
+<span class="folder">&nbsp;&nbsp;📁 rules/</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;📄 agents.md</span>            <span style="color:#6a9955;">← Principios, tabla de tokens y cómo añadir agentes</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;📄 code-style.md</span>         <span style="color:#6a9955;">← PEP 8, Streamlit, gestión de errores, archivos</span><br>
+<span class="folder">&nbsp;&nbsp;📁 skills/</span><br>
+<span class="folder">&nbsp;&nbsp;&nbsp;&nbsp;📁 proposal-generation/</span><br>
+<span class="file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 SKILL.md</span>          <span style="color:#6a9955;">← QA checklist y anti-patrones de propuestas</span>
+    </div>
+
+    <h3>⚙️ settings.json — Modelo y Permisos</h3>
+    <p>Define el modelo que Claude Code usa y qué acciones tiene permitidas o prohibidas:</p>
+<pre><code>{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Write(02-session/**)",
+      "Bash(streamlit run app.py)",
+      "Bash(pip install *)",
+      "Bash(python *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push *)",
+      "Bash(git reset --hard *)"
+    ]
+  },
+  "model": "claude-opus-4-5",
+  "hooks": {
+    "PreToolUse": [".claude/hooks/validate-bash.sh"]
+  }
+}</code></pre>
+
+    <div class="table-responsive">
+        <table class="styled-table">
+            <thead><tr><th>Configuración</th><th>Valor</th><th>Propósito</th></tr></thead>
+            <tbody>
+                <tr><td><code>model</code></td><td><code>claude-opus-4-5</code></td><td>Modelo de Claude Code para asistencia en desarrollo (distinto al Haiku que usa la app)</td></tr>
+                <tr><td><code>allow: Read(**)</code></td><td>Todo el proyecto</td><td>Claude puede leer cualquier archivo del repositorio</td></tr>
+                <tr><td><code>allow: Write(02-session/**)</code></td><td>Solo la sesión</td><td>Solo puede escribir dentro de la carpeta del proyecto</td></tr>
+                <tr><td><code>allow: Bash(streamlit run ...)</code></td><td>Comandos seguros</td><td>Puede ejecutar la app, instalar paquetes y correr scripts Python</td></tr>
+                <tr><td><code>deny: Bash(rm -rf *)</code></td><td>Comandos destructivos</td><td>No puede borrar archivos en masa ni hacer force push a Git</td></tr>
+                <tr><td><code>hooks.PreToolUse</code></td><td>validate-bash.sh</td><td>Valida cada comando bash antes de ejecutarlo</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>📁 Paso 1 — Crear la Estructura de Carpetas</h3>
+    <div class="step-box">
+        <span class="step-num">1</span>
+        <h4>Crear las subcarpetas de <code>.claude/</code> desde PowerShell</h4>
+        <p>Desde la raíz del proyecto (<code>agente-marketing/</code>) ejecuta:</p>
+<pre><code># Windows PowerShell
+mkdir .claude, .claude\agents, .claude\commands, .claude\rules, .claude\skills\proposal-generation -Force</code></pre>
+    </div>
+
+    <hr class="divider">
+
+    <h3>📋 Paso 2 — CLAUDE.md (raíz del proyecto)</h3>
+    <div class="step-box">
+        <span class="step-num">2</span>
+        <h4>Crear <code>CLAUDE.md</code> en la raíz del proyecto</h4>
+        <p>Este archivo le describe a Claude Code el proyecto completo: stack, arquitectura y comandos clave. Claude lo lee automáticamente cuando abres el proyecto.</p>
+<pre><code># Generador de Propuestas Comerciales de Marketing
+
+## Descripción del Proyecto
+
+Aplicación Streamlit multi-agente que genera propuestas comerciales de marketing personalizadas
+usando LangGraph + Claude (Anthropic). Cuatro agentes especializados trabajan en cadena y
+entregan la propuesta en formato `.md` y `.pdf`.
+
+## Stack Tecnológico
+
+- **Frontend:** Streamlit
+- **Orquestación de agentes:** LangGraph
+- **LLM:** Claude (claude-haiku-4-5-20251001) via `langchain-anthropic`
+- **PDF:** ReportLab
+- **Entorno:** Python 3.10+, `python-dotenv`
+
+## Arquitectura de Agentes
+
+MarketingProposalState
+        │
+        ▼
+  [analyst] ──► [strategist] ──► [writer] ──► [editor]
+  Analista de    Estratega de     Redactor     Editor
+  Mercado        Marca            Comercial    Senior
+
+Cada agente consume el estado compartido `MarketingProposalState` y agrega su output
+al mismo estado antes de pasarlo al siguiente.
+
+## Comandos Clave
+
+  # Instalar dependencias
+  pip install -r requirements.txt
+
+  # Ejecutar la app
+  streamlit run app.py
+
+  # Crear archivo .env con la API key
+  echo "ANTHROPIC_API_KEY=sk-ant-..." &gt; .env
+
+## Convenciones de Código
+
+Ver `.claude/rules/code-style.md` y `.claude/rules/agents.md`.
+
+## Skills Disponibles
+
+Ver `.claude/skills/proposal-generation/SKILL.md` para la guía de calidad de propuestas.
+
+## Agentes Definidos
+
+Ver `.claude/agents/` para la especificación de cada rol.
+
+## Variables de Entorno
+
+| Variable           | Descripción                                                    |
+|--------------------|----------------------------------------------------------------|
+| ANTHROPIC_API_KEY  | API Key de Anthropic (obligatoria si no se ingresa en UI)      |
+
+## Exportación
+
+La propuesta se puede descargar en:
+- **Markdown (`.md`)** — texto plano con formato
+- **PDF (`.pdf`)** — documento profesional con estilos corporativos</code></pre>
+    </div>
+
+    <hr class="divider">
+
+    <h3>⚙️ Paso 3 — .claude/settings.json</h3>
+    <div class="step-box">
+        <span class="step-num">3</span>
+        <h4>Crear <code>.claude/settings.json</code></h4>
+        <p>Define el modelo que Claude Code usará y los permisos de acciones permitidas y prohibidas en el proyecto.</p>
+<pre><code>{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Write(02-session/**)",
+      "Bash(streamlit run app.py)",
+      "Bash(pip install *)",
+      "Bash(python *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push *)",
+      "Bash(git reset --hard *)"
+    ]
+  },
+  "model": "claude-opus-4-5",
+  "hooks": {
+    "PreToolUse": [".claude/hooks/validate-bash.sh"]
+  }
+}</code></pre>
+    </div>
+
+    <div class="table-responsive">
+        <table class="styled-table">
+            <thead><tr><th>Configuración</th><th>Valor</th><th>Propósito</th></tr></thead>
+            <tbody>
+                <tr><td><code>model</code></td><td><code>claude-opus-4-5</code></td><td>Modelo de Claude Code para asistencia en desarrollo (distinto al Haiku que usa la app)</td></tr>
+                <tr><td><code>allow: Read(**)</code></td><td>Todo el proyecto</td><td>Claude puede leer cualquier archivo del repositorio</td></tr>
+                <tr><td><code>allow: Write(02-session/**)</code></td><td>Solo la sesión</td><td>Solo puede escribir dentro de la carpeta del proyecto</td></tr>
+                <tr><td><code>allow: Bash(streamlit run ...)</code></td><td>Comandos seguros</td><td>Puede ejecutar la app, instalar paquetes y correr scripts Python</td></tr>
+                <tr><td><code>deny: Bash(rm -rf *)</code></td><td>Comandos destructivos</td><td>No puede borrar archivos en masa ni hacer force push a Git</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <hr class="divider">
+
+    <h3>🤖 Paso 4 — Agentes (.claude/agents/)</h3>
+    <p>Cada archivo documenta formalmente un agente: su rol, el framework que aplica, los criterios de calidad del output y sus conexiones de entrada/salida en el pipeline.</p>
+
+    <div class="agent-step-box">
+        <span class="agent-num">1</span>
+        <h4>Crear <code>.claude/agents/market-analyst.md</code></h4>
+<pre><code># Agente: Analista de Mercado y Cliente
+
+## Rol
+Analista senior de mercado y marketing B2B con 15 años de experiencia en diagnóstico
+de clientes para agencias de marketing en Latinoamérica.
+
+## Responsabilidad en el Pipeline
+**Posición:** 1 de 4 — Primer nodo del grafo LangGraph.
+**Input:** Datos crudos del formulario (empresa, sector, necesidad, público objetivo).
+**Output:** `market_analysis` — análisis estructurado que alimenta al Estratega.
+
+## Framework Aplicado: PEST + Pain-Gain-Fear
+
+  Análisis PEST del sector del cliente
+    ├── Político/Legal
+    ├── Económico (presupuesto típico de mktg en el sector)
+    ├── Social (comportamiento del consumidor)
+    └── Tecnológico (madurez digital)
+
+  Perfil Pain-Gain-Fear del decisor
+    ├── Pain: obstáculos de marketing que enfrenta hoy
+    ├── Gain: beneficios que espera del servicio
+    └── Fear: riesgos percibidos al contratar
+
+## Criterios de Output de Calidad
+
+- Análisis específico al sector declarado, no genérico
+- Identificar al menos 3 pain points concretos
+- Describir el perfil del decisor (CEO, Director de Marketing, etc.)
+- Mencionar 1-2 competidores o tendencias del sector como referencia
+- Formato: viñetas + subtítulos, máx. 450 palabras
+
+## System Prompt Base
+
+Ver implementación en `app.py` → `agent_market_analyst()`.
+El prompt debe seguir el patrón del `SKILL.md` de `proposal-generation`.
+
+## Conexiones
+
+- **Recibe de:** Formulario Streamlit → `MarketingProposalState`
+- **Entrega a:** `agent_brand_strategist` vía `state["market_analysis"]`</code></pre>
+    </div>
+
+    <div class="agent-step-box">
+        <span class="agent-num">2</span>
+        <h4>Crear <code>.claude/agents/brand-strategist.md</code></h4>
+<pre><code># Agente: Estratega de Marca y Marketing
+
+## Rol
+Estratega de marca y marketing B2B especializado en propuestas comerciales para Latinoamérica.
+Define el posicionamiento estratégico y los mensajes persuasivos que conectan el análisis
+del cliente con la propuesta final.
+
+## Responsabilidad en el Pipeline
+**Posición:** 2 de 4
+**Input:** `market_analysis` del Analista + datos del servicio.
+**Output:** `brand_strategy` — estrategia y mensajes clave para el Redactor.
+
+## Framework Aplicado: Messaging Hierarchy Canvas
+
+  Core Message (1 frase que captura el valor principal)
+    ├── Proof Point 1 — Evidencia o dato del sector
+    ├── Proof Point 2 — Caso o metodología de la agencia
+    └── Proof Point 3 — Garantía o diferenciador competitivo
+
+  Posicionamiento frente a competencia
+    └── ¿Por qué esta agencia? ¿Por qué ahora? ¿Por qué este servicio?
+
+  Manejo de Objeciones (top 3)
+    ├── "Es muy caro" → ROI y costo de oportunidad
+    ├── "Ya tenemos alguien interno" → Especialización y escalabilidad
+    └── [Objeción específica del sector del cliente]
+
+## Criterios de Output de Calidad
+
+- El Core Message menciona un beneficio de negocio, no una característica
+- Los Proof Points son verificables o al menos verosímiles para el sector
+- Las objeciones son las más probables para ese tipo de cliente
+- KPIs propuestos son de negocio, no solo de vanidad (likes, alcance)
+- Tono: consultivo y confiante, no arrogante
+
+## System Prompt Base
+
+Ver implementación en `app.py` → `agent_brand_strategist()`.
+
+## Conexiones
+
+- **Recibe de:** `agent_market_analyst` vía `state["market_analysis"]`
+- **Entrega a:** `agent_proposal_writer` vía `state["brand_strategy"]`</code></pre>
+    </div>
+
+    <div class="agent-step-box">
+        <span class="agent-num">3</span>
+        <h4>Crear <code>.claude/agents/proposal-writer.md</code></h4>
+<pre><code># Agente: Redactor de Propuesta Comercial
+
+## Rol
+Redactor comercial especializado en propuestas de marketing B2B para empresas latinoamericanas.
+Integra el análisis y la estrategia en una narrativa persuasiva de 11 secciones.
+
+## Responsabilidad en el Pipeline
+**Posición:** 3 de 4
+**Input:** `market_analysis` + `brand_strategy` + datos del cliente/servicio.
+**Output:** `proposal_draft` — borrador completo de la propuesta en Markdown.
+
+## Framework Aplicado: StoryBrand Adaptado
+
+  1. Personaje     → El cliente y su situación actual
+  2. Problema      → El obstáculo de marketing específico
+  3. Guía          → La agencia con su expertise y metodología
+  4. Plan          → El servicio en fases claras y ejecutables
+  5. CTA           → Próximos pasos concretos
+  6. Éxito         → Resultados esperados con KPIs medibles
+
+## Estructura Obligatoria de la Propuesta (11 secciones)
+
+| N° | Sección                        | Objetivo                                          |
+|----|--------------------------------|---------------------------------------------------|
+|  1 | Encabezado formal              | Datos remitente, destinatario, fecha, N° propuesta|
+|  2 | Resumen Ejecutivo              | Problema → Solución → Resultado en 3 párrafos     |
+|  3 | Entendimiento del Cliente      | Mostrar que entendemos su mundo                   |
+|  4 | Solución Propuesta             | Describir el servicio en términos de beneficio    |
+|  5 | Por Qué Esta Estrategia        | Justificar con datos del análisis                 |
+|  6 | Metodología y Plan             | Fases, actividades, responsables                  |
+|  7 | Entregables y KPIs             | Qué recibe y cómo se mide el éxito               |
+|  8 | Cronograma                     | Fases relativas (Semana 1, Mes 2...)              |
+|  9 | Inversión                      | Monto, desglose de valor, condiciones de pago     |
+| 10 | Próximos Pasos                 | CTA activo con verbo imperativo                   |
+| 11 | Cierre y Firma                 | Profesional y cálido                              |
+
+## Criterios de Output de Calidad
+
+- El nombre del cliente aparece al menos 3 veces
+- Los beneficios mencionados son tangibles y medibles
+- Cada sección fluye narrativamente hacia la siguiente
+- Mínimo 800 palabras en el cuerpo
+- Markdown limpio y consistente (ver `rules/code-style.md`)
+
+## Conexiones
+
+- **Recibe de:** `agent_brand_strategist` vía `state["brand_strategy"]`
+- **Entrega a:** `agent_editor` vía `state["proposal_draft"]`</code></pre>
+    </div>
+
+    <div class="agent-step-box">
+        <span class="agent-num">4</span>
+        <h4>Crear <code>.claude/agents/editor.md</code></h4>
+<pre><code># Agente: Editor Senior y Revisor de Calidad
+
+## Rol
+Editor senior de comunicación comercial y marketing de alto nivel. Su misión es elevar
+el borrador a una propuesta lista para enviar, aplicando la rubrica PACT y el checklist
+del SKILL.md.
+
+## Responsabilidad en el Pipeline
+**Posición:** 4 de 4 — Último nodo antes del output final.
+**Input:** `proposal_draft` del Redactor.
+**Output:** `final_proposal` — propuesta final pulida, completa y lista para entregar.
+
+## Framework Aplicado: Rubrica PACT
+
+  P — Personalización
+      ¿Parece escrita PARA ESTE cliente específico?
+      ¿El sector, el pain point y el nombre del cliente están integrados?
+
+  A — Accionabilidad
+      ¿El cliente sabe exactamente qué hacer después de leerla?
+      ¿Los Próximos Pasos tienen un verbo imperativo y un plazo?
+
+  C — Claridad
+      ¿Cada sección puede leerse y entenderse en menos de 60 segundos?
+      ¿Hay frases vagas o jerga innecesaria que debe eliminarse?
+
+  T — Tono
+      ¿El tono es consultivo (orientado al cliente) o vendedor (orientado a la agencia)?
+      ¿Se evitan superlativos vacíos ("somos los mejores")?
+
+## Checklist de Revisión Final
+
+- [ ] Las 11 secciones están presentes y en orden
+- [ ] El Resumen Ejecutivo tiene la estructura Problema → Solución → Resultado
+- [ ] Los KPIs son de negocio (conversión, ROI, costo por lead), no solo de vanidad
+- [ ] La sección de Inversión tiene condiciones de pago explícitas
+- [ ] El Cronograma usa fases relativas (no fechas absolutas)
+- [ ] Los Próximos Pasos tienen CTA activo con verbo imperativo
+- [ ] El Markdown es consistente: ## secciones, **bold** énfasis, listas con -
+- [ ] NO hay contenido recortado respecto al borrador (solo mejoras)
+
+## Reglas de Edición
+
+1. **NUNCA** recortar contenido — solo mejorar y expandir donde sea necesario
+2. **NUNCA** cambiar cifras de inversión o fechas sin respaldo
+3. Mantener el nombre del cliente y la empresa exactamente como los recibió
+4. Si una sección falta en el borrador, añadirla con contenido coherente al contexto
+
+## Conexiones
+
+- **Recibe de:** `agent_proposal_writer` vía `state["proposal_draft"]`
+- **Entrega a:** Output final → `state["final_proposal"]` → UI Streamlit → .md y .pdf</code></pre>
+    </div>
+
+    <hr class="divider">
+
+    <h3>📐 Paso 5 — Reglas (.claude/rules/)</h3>
+
+    <div class="python-step-box">
+        <span class="python-step-num">1</span>
+        <h4>Crear <code>.claude/rules/agents.md</code></h4>
+<pre><code># Reglas de Desarrollo de Agentes
+
+## Principios Generales
+
+1. **Rol específico:** Cada agente tiene un rol claro y único; no solapan responsabilidades
+2. **Input explícito:** El human message siempre incluye el contexto completo necesario
+3. **Output acotado:** El system prompt define el formato y el límite de palabras del output
+4. **Sin estado externo:** Los agentes solo leen de `state` y solo escriben su clave de output
+
+## Estructura de System Prompt (obligatoria)
+
+  Eres [ROL ESPECÍFICO] con [X] años de experiencia en [DOMINIO].
+  Tu misión es [OBJETIVO CONCRETO Y MEDIBLE].
+  Aplica [FRAMEWORK O METODOLOGÍA].
+  Formato: [Markdown/viñetas/tabla]. Máximo [N] palabras.
+
+## Tokens y Modelos
+
+| Agente     | max_tokens | Justificación                            |
+|------------|-----------|------------------------------------------|
+| analyst    | 1500      | Análisis estructurado, conciso           |
+| strategist | 1500      | Estrategia y mensajes clave              |
+| writer     | 3500      | Propuesta completa (11 secciones)        |
+| editor     | 4096      | Propuesta completa + mejoras             |
+
+## Flujo de Estado LangGraph
+
+- El estado es un `TypedDict` inmutable desde la perspectiva de cada agente
+- Cada agente retorna **solo** el dict con su clave de output: {"market_analysis": ...}
+- LangGraph hace el merge automático al estado compartido
+
+## Añadir un Nuevo Agente
+
+1. Crear la función `agent_&lt;nombre&gt;(state: MarketingProposalState) -&gt; dict`
+2. Agregar la clave de output al `TypedDict` en `MarketingProposalState`
+3. Registrar el nodo en `build_graph()`: `graph.add_node("nombre", agent_nombre)`
+4. Agregar el edge correspondiente con `graph.add_edge()`
+5. Actualizar `AGENT_LABELS`, `AGENT_DESCRIPTIONS` y `OUTPUT_KEYS`
+6. Documentar el agente en `.claude/agents/&lt;nombre&gt;.md`
+
+## Skills Aplicables
+
+Los agentes de propuesta deben implementar los frameworks definidos en:
+.claude/skills/proposal-generation/SKILL.md</code></pre>
+    </div>
+
+    <div class="python-step-box">
+        <span class="python-step-num">2</span>
+        <h4>Crear <code>.claude/rules/code-style.md</code></h4>
+<pre><code># Convenciones de Código
+
+## Python
+
+- **Formateo:** PEP 8, líneas máx. 100 caracteres
+- **Nombres de funciones de agente:** `agent_&lt;rol&gt;` en snake_case
+- **Nombres de nodos LangGraph:** snake_case corto (ej. `analyst`, `writer`)
+- **TypedDict:** usar `MarketingProposalState` como único estado compartido del grafo
+- **LLM helper:** centralizar en `_llm(api_key, max_tokens)` para evitar repetición
+
+## Strings de Prompts
+
+- Los system prompts van en `SystemMessage(content="""...""")`
+- Los human messages estructuran el input con separadores `━━━ SECCIÓN ━━━`
+- Nunca hardcodear la API key en el código; leer de `state["api_key"]`
+
+## Streamlit
+
+- Configuración de página en `st.set_page_config()` al inicio, antes de cualquier widget
+- CSS custom vía `st.markdown("""&lt;style&gt;...&lt;/style&gt;""", unsafe_allow_html=True)`
+- Estado de sesión con `st.session_state["proposal"]` para la propuesta generada
+- Botones de descarga con `st.download_button()`
+
+## Gestión de Errores
+
+- Capturar errores de autenticación, rate limit y genéricos por separado
+- Mostrar mensajes de error en español y orientados a la acción del usuario
+
+## Archivos del Proyecto
+
+| Archivo          | Propósito                                           |
+|------------------|-----------------------------------------------------|
+| `app.py`         | App principal Streamlit (agentes + UI)              |
+| `_check.py`      | Validaciones y utilidades                           |
+| `_writer.py`     | Helpers de generación de texto/PDF                  |
+| `requirements.txt` | Dependencias Python                               |
+| `CLAUDE.md`      | Descripción del proyecto para Claude Code           |
+| `.env`           | Variables de entorno locales (no commitear)         |</code></pre>
+    </div>
+
+    <hr class="divider">
+
+    <h3>🎯 Paso 6 — Comando Personalizado (.claude/commands/)</h3>
+
+    <div class="python-step-box">
+        <span class="python-step-num">1</span>
+        <h4>Crear <code>.claude/commands/review-proposal.md</code></h4>
+        <p>Define el comando <code>/review-proposal</code>. Cuando lo ejecutas en Claude Code, audita automáticamente la propuesta generada contra el checklist de calidad del SKILL.md.</p>
+<pre><code># /review-proposal
+
+Revisa la propuesta generada contra el checklist de calidad del SKILL.md.
+
+## Uso
+/review-proposal
+
+## Qué Hace
+1. Lee `.claude/skills/proposal-generation/SKILL.md`
+2. Aplica el checklist de calidad a st.session_state["proposal"]
+3. Lista los ítems que fallan y sugiere correcciones específicas
+
+## Criterios Revisados
+- Personalización (nombre del cliente, sector, pain points)
+- Estructura narrativa (11 secciones en orden)
+- Persuasión (beneficios tangibles, objeciones respondidas)
+- Formato Markdown (consistencia, legibilidad)
+- Completitud (mínimo 800 palabras, firma, CTA activo)</code></pre>
+    </div>
+
+    <hr class="divider">
+
+    <h3>🏆 Paso 7 — Skill de Calidad (.claude/skills/proposal-generation/SKILL.md)</h3>
+
+    <div class="python-step-box">
+        <span class="python-step-num">1</span>
+        <h4>Crear <code>.claude/skills/proposal-generation/SKILL.md</code></h4>
+        <p>Es el estándar de calidad del proyecto. Claude Code lo carga automáticamente para auditar y mejorar las propuestas generadas.</p>
+<pre><code># SKILL: Generación de Propuestas Comerciales de Marketing
+
+## Objetivo
+Producir propuestas comerciales de marketing B2B en español que sean **persuasivas,
+específicas y orientadas a resultados**, calibradas al perfil del decisor y al sector
+del cliente.
+
+---
+
+## Criterios de Calidad (QA Checklist)
+
+### 1. Personalización (Critical)
+- [ ] El nombre y empresa del cliente aparecen al menos 3 veces en el cuerpo
+- [ ] El sector/industria se refleja en el análisis, la estrategia y los entregables
+- [ ] Los pain points mencionados vienen del brief del cliente, no son genéricos
+- [ ] Los KPIs propuestos son relevantes para ese sector específico
+
+### 2. Estructura Narrativa
+- [ ] El Resumen Ejecutivo responde en 3 párrafos: problema → solución → resultado
+- [ ] Cada sección prepara lógicamente la siguiente (flujo narrativo)
+- [ ] La sección "Por Qué Esta Estrategia" conecta análisis → estrategia → propuesta
+- [ ] "Próximos Pasos" tiene una acción concreta con verbo imperativo (Ej: "Agenda...")
+
+### 3. Persuasión y Lenguaje
+- [ ] Los beneficios son tangibles y cuantificables (evitar "mejoraremos su presencia")
+- [ ] Se anticipan y responden al menos 2 objeciones implícitas
+- [ ] El tono es consultivo, no vendedor (enfocado en el cliente, no en la agencia)
+- [ ] Los verbos en la propuesta son de acción y resultado (lograr, aumentar, consolidar)
+
+### 4. Formato y Legibilidad
+- [ ] Encabezado formal con N° de propuesta, fecha, remitente y destinatario
+- [ ] Uso consistente de Markdown: ## para secciones, **bold** para énfasis clave
+- [ ] Listas de viñetas para entregables y fases (máx. 6 ítems por lista)
+- [ ] Cronograma presentado en fases claras (no en fechas absolutas)
+- [ ] Sección de inversión con condiciones y forma de pago explícitas
+
+### 5. Completitud
+- [ ] 11 secciones presentes en el orden definido (ver CLAUDE.md)
+- [ ] Mínimo 800 palabras en el cuerpo de la propuesta
+- [ ] Firma con nombre, cargo, empresa y contacto del remitente
+
+---
+
+## Anti-patrones a Evitar
+
+| Anti-patrón                          | Corrección                                                      |
+|--------------------------------------|-----------------------------------------------------------------|
+| "Somos líderes en el mercado"        | "Hemos gestionado campañas en [sector] con resultados de [X]"  |
+| KPIs genéricos (engagement, alcance) | KPIs de negocio (costo por lead, tasa de conversión, ROI)       |
+| Cronograma en fechas absolutas       | Semanas/fases relativas al inicio del contrato                  |
+| Precio sin contexto                  | Inversión + desglose de valor entregado                         |
+| Cierre pasivo "esperamos su respuesta"| CTA activo: "Agenda una llamada de 30 min esta semana"         |
+
+---
+
+## Estructura de Prompt Óptima para Agentes
+
+### Patrón de System Prompt
+  Eres [ROL ESPECÍFICO] con [X] años de experiencia en [DOMINIO].
+  Tu misión en esta propuesta es [OBJETIVO CONCRETO].
+  Aplica [FRAMEWORK O METODOLOGÍA ESPECÍFICA].
+  Output: [FORMATO ESPERADO], máximo [N] palabras.
+
+### Patrón de Human Message
+  [CONTEXTO DE INPUT PREVIO]
+  ---
+  [DATOS ESPECÍFICOS DEL CLIENTE]
+  ---
+  Genera [OUTPUT ESPECÍFICO] que cumpla:
+  1. [CRITERIO 1]
+  2. [CRITERIO 2]
+  3. [CRITERIO 3]
+
+---
+
+## Frameworks de Referencia por Agente
+
+### Agente Analista → Framework PEST + Pain-Gain-Fear
+- **P**olítico/Legal del sector
+- **E**conómico: presupuesto típico de marketing en ese sector
+- **S**ocial: comportamiento del consumidor del cliente
+- **T**ecnológico: madurez digital del sector
+- **Pain:** qué problema urgente resuelve
+- **Gain:** qué resultado positivo promete
+- **Fear:** qué riesgo de NO contratar existe
+
+### Agente Estratega → Messaging Hierarchy Canvas
+  Core Message (1 frase)
+    ├── Proof Point 1 (evidencia)
+    ├── Proof Point 2 (caso/dato)
+    └── Proof Point 3 (garantía/metodología)
+
+### Agente Redactor → StoryBrand Framework Adaptado
+  1. Personaje: el cliente y su situación
+  2. Problema: el obstáculo específico de marketing
+  3. Guía: la agencia con su expertise
+  4. Plan: el servicio propuesto en fases
+  5. Llamada a la acción: los próximos pasos
+  6. Éxito: los resultados esperados con KPIs
+
+### Agente Editor → Rubrica de Revisión PACT
+- **P**ersonalización: ¿Parece escrita para ESTE cliente?
+- **A**ccionabilidad: ¿El cliente sabe qué hacer al leerla?
+- **C**laridad: ¿Cada sección puede leerse en 60 segundos?
+- **T**ono: ¿Consultivo, no vendedor?</code></pre>
+    </div>
+
+    <div class="success-box">
+        <h4>✅ Configuración .claude/ completa — 9 archivos creados</h4>
+        <p>Con todos estos archivos, Claude Code tendrá el contexto completo del proyecto para:</p>
+        <ul>
+            <li>Conocer el rol y los criterios de cada agente antes de sugerir cambios en el código</li>
+            <li>Respetar las convenciones de código (PEP 8, nombres <code>agent_&lt;rol&gt;</code>, estilos Streamlit)</li>
+            <li>Ejecutar <code>/review-proposal</code> para auditar propuestas generadas</li>
+            <li>Aplicar el checklist PACT y los anti-patrones al revisar código</li>
+            <li>Rechazar comandos destructivos (<code>rm -rf</code>, <code>git push --force</code>)</li>
+        </ul>
+    </div>
+
+    <div class="reflection-box">
+        <h4>💡 ¿Por qué documentar así los agentes?</h4>
+        <p>Los archivos en <code>.claude/agents/</code> no ejecutan código — son documentación estructurada que Claude Code lee automáticamente al trabajar en el proyecto. Cuando le pides "agrega un quinto agente", ya conoce el patrón exacto a seguir: mismo formato de función, mismo TypedDict, mismo estilo de prompt y misma estructura de documentación.</p>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== ESTADO COMPARTIDO ===== -->
+<section id="estado">
+    <h2>Construir app.py — Parte 1: Estado Compartido</h2>
+    <p>Crea el archivo <code>app.py</code> en la raíz del proyecto. Lo construiremos sección por sección.</p>
+
+    <div class="python-step-box">
+        <span class="python-step-num">1</span>
+        <h4>Importaciones y carga del entorno</h4>
+        <p>Agrega esto al inicio de <code>app.py</code>:</p>
+<pre><code>import io
+import re
+import streamlit as st
+import os
+from datetime import date
+from typing import TypedDict
+from dotenv import load_dotenv
+
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.lib.colors import HexColor
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
+
+from langchain_anthropic import ChatAnthropic
+from langchain_core.messages import HumanMessage, SystemMessage
+from langgraph.graph import StateGraph, END
+
+load_dotenv()  # Carga las variables del archivo .env</code></pre>
+    </div>
+
+    <div class="python-step-box">
+        <span class="python-step-num">2</span>
+        <h4>Definir el Estado Compartido con TypedDict</h4>
+        <p>El estado es el "contrato" que define exactamente qué datos fluyen entre los agentes:</p>
+<pre><code># ══════════════════════════════════════════════
+# ESTADO COMPARTIDO DEL GRAFO (LangGraph)
+# ══════════════════════════════════════════════
+class MarketingProposalState(TypedDict):
+    """Estado compartido que fluye entre todos los agentes."""
+    api_key: str
+    client_name: str
+    client_company: str
+    client_industry: str
+    client_need: str
+    target_audience: str
+    service_type: str
+    service_details: str
+    budget_range: str
+    timeline: str
+    sender_company: str
+    sender_name: str
+    sender_role: str
+    sender_contact: str
+    today: str
+    # Outputs de los agentes (inicialmente vacíos "")
+    market_analysis: str
+    brand_strategy: str
+    proposal_draft: str
+    final_proposal: str</code></pre>
+    </div>
+
+    <div class="lang-box">
+        <h4>🔗 ¿Por qué TypedDict para el estado?</h4>
+        <p>LangGraph requiere que el estado sea un <code>TypedDict</code> porque necesita saber exactamente qué claves existen para hacer el merge automático. Cuando un agente retorna <code>{"market_analysis": "texto..."}</code>, LangGraph actualiza solo esa clave en el estado y pasa el estado completo al siguiente nodo.</p>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== HELPERS ===== -->
+<section id="helpers">
+    <h2>Parte 2: Helpers y Generador de PDF</h2>
+
+    <div class="python-step-box">
+        <span class="python-step-num">1</span>
+        <h4>Helper para crear el LLM</h4>
+        <p>Centralizar la creación del LLM evita repetición en los 4 agentes:</p>
+<pre><code># ══════════════════════════════════════════════
+# HELPERS
+# ══════════════════════════════════════════════
+def _llm(api_key: str, max_tokens: int = 1500) -> ChatAnthropic:
+    return ChatAnthropic(
+        model="claude-haiku-4-5-20251001",
+        api_key=api_key,
+        max_tokens=max_tokens,
+    )</code></pre>
+    </div>
+
+    <div class="reflection-box">
+        <h4>💡 ¿Por qué <code>max_tokens</code> variable?</h4>
+        <p>Cada agente necesita diferente espacio para su output. El Analista y Estratega trabajan con 1500 tokens (suficiente para análisis conciso), el Redactor usa 3500 tokens (propuesta completa de 11 secciones) y el Editor usa 4096 tokens (debe devolver la propuesta completa mejorada). Centralizar en <code>_llm()</code> permite configurar esto en un solo lugar.</p>
+    </div>
+
+    <div class="python-step-box">
+        <span class="python-step-num">2</span>
+        <h4>Función para convertir Markdown a ReportLab</h4>
+<pre><code># ══════════════════════════════════════════════
+# GENERADOR DE PDF
+# ══════════════════════════════════════════════
+def _inline_md(text: str) -> str:
+    """Convierte Markdown inline (**bold**, *italic*) a tags ReportLab."""
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+    text = re.sub(r"\*(.+?)\*", r"<i>\1</i>", text)
+    return text</code></pre>
+    </div>
+
+    <div class="python-step-box">
+        <span class="python-step-num">3</span>
+        <h4>Función principal para generar el PDF</h4>
+<pre><code>def generate_pdf(proposal_text: str, client_name: str) -> bytes:
+    """Genera un PDF profesional a partir del texto Markdown de la propuesta."""
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=25 * mm, leftMargin=25 * mm,
+        topMargin=28 * mm,   bottomMargin=28 * mm,
+        title=f"Propuesta Comercial — {client_name}",
+    )
+
+    base = getSampleStyleSheet()
+    COLOR_DARK  = HexColor("#0f3460")
+    COLOR_MID   = HexColor("#16213e")
+    COLOR_LIGHT = HexColor("#1a2f4b")
+    COLOR_RULE  = HexColor("#0f3460")
+
+    sH1    = ParagraphStyle("sH1", parent=base["Heading1"],
+                            fontSize=18, textColor=COLOR_DARK,
+                            spaceBefore=20, spaceAfter=10, leading=22)
+    sH2    = ParagraphStyle("sH2", parent=base["Heading2"],
+                            fontSize=14, textColor=COLOR_MID,
+                            spaceBefore=14, spaceAfter=7, leading=18)
+    sH3    = ParagraphStyle("sH3", parent=base["Heading3"],
+                            fontSize=11, textColor=COLOR_LIGHT,
+                            spaceBefore=10, spaceAfter=5, leading=15)
+    sBody  = ParagraphStyle("sBody", parent=base["Normal"],
+                            fontSize=10, leading=16, spaceAfter=5)
+    sBullet = ParagraphStyle("sBullet", parent=base["Normal"],
+                             fontSize=10, leading=16, leftIndent=18,
+                             firstLineIndent=0, spaceAfter=3)
+    sNum   = ParagraphStyle("sNum", parent=sBullet, leftIndent=22)
+
+    story = []
+    for raw in proposal_text.splitlines():
+        line = raw.strip()
+        if not line:
+            story.append(Spacer(1, 4))
+            continue
+        if re.match(r"^[━\-=]{3,}$", line):
+            story.append(Spacer(1, 4))
+            story.append(HRFlowable(width="100%", thickness=1,
+                                    color=COLOR_RULE, spaceAfter=6))
+            continue
+        text = _inline_md(line)
+        if line.startswith("### "):
+            story.append(Paragraph(_inline_md(line[4:]), sH3))
+        elif line.startswith("## "):
+            story.append(Paragraph(_inline_md(line[3:]), sH2))
+        elif line.startswith("# "):
+            story.append(Paragraph(_inline_md(line[2:]), sH1))
+        elif re.match(r"^[-*] ", line):
+            story.append(Paragraph("&#x2022;&nbsp;&nbsp;" + _inline_md(line[2:]), sBullet))
+        elif re.match(r"^\d+\.\s", line):
+            story.append(Paragraph(text, sNum))
+        else:
+            story.append(Paragraph(text, sBody))
+
+    doc.build(story)
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+    return pdf_bytes</code></pre>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== AGENTE 1 ===== -->
+<section id="agente1">
+    <h2>Parte 3: Agente 1 — Analista de Mercado</h2>
+    <p>El primer agente en la cadena. <strong>Percibe</strong> los datos del cliente y produce un diagnóstico estratégico.</p>
+
+    <div class="ai-box">
+        <h4>🔍 Framework: PEST + Pain-Gain-Fear</h4>
+        <ul>
+            <li><strong>PEST:</strong> Político/Legal, Económico, Social, Tecnológico — analiza el sector del cliente</li>
+            <li><strong>Pain:</strong> 3 obstáculos de marketing que el cliente enfrenta hoy</li>
+            <li><strong>Gain:</strong> 3 beneficios concretos que espera del servicio</li>
+            <li><strong>Fear:</strong> 2 riesgos percibidos al contratar una agencia externa</li>
+        </ul>
+    </div>
+
+    <div class="agent-step-box">
+        <span class="agent-num">1</span>
+        <h4>Agregar <code>agent_market_analyst()</code> a app.py</h4>
+<pre><code># ══════════════════════════════════════════════
+# AGENTE 1 — Analista de Mercado y Cliente
+# ══════════════════════════════════════════════
+def agent_market_analyst(state: MarketingProposalState) -> dict:
+    """Analiza al cliente, su mercado, pain points y oportunidades."""
+    llm = _llm(state["api_key"])  # max_tokens=1500 por defecto
+    messages = [
+        SystemMessage(content="""Eres un analista senior de mercado y marketing B2B con 15 años de experiencia en Latinoamérica.
+Tu misión es producir un diagnóstico estratégico que permita al siguiente agente construir una propuesta altamente personalizada.
+
+Aplica el framework PEST + Pain-Gain-Fear:
+
+**PEST del sector:**
+- Político/Legal: regulaciones o tendencias que afectan al sector
+- Económico: presupuesto típico de marketing en ese sector y ciclo de venta
+- Social: comportamiento y expectativas del consumidor final del cliente
+- Tecnológico: madurez digital del sector y herramientas que ya usan
+
+**Perfil Pain-Gain-Fear del decisor:**
+- Pain: 3 obstáculos de marketing que enfrenta HOY (específicos, no genéricos)
+- Gain: 3 beneficios concretos que espera obtener del servicio
+- Fear: 2 riesgos percibidos al contratar una agencia externa
+
+**Oportunidad estratégica:**
+- 1 insight diferenciador que la propuesta debe capitalizar
+- Posicionamiento actual frente a 1-2 competidores o referentes del sector
+
+Formato: subtítulos en negrita + viñetas. Máximo 500 palabras. Todo en español."""),
+        HumanMessage(content=f"""Analiza este cliente potencial de marketing usando PEST + Pain-Gain-Fear:
+
+━━━ DATOS DEL CLIENTE ━━━
+Empresa: {state['client_company']}
+Sector / industria: {state['client_industry'] or 'No especificado — infiere del contexto'}
+Contacto / decisor: {state['client_name']}
+Necesidad de marketing declarada: {state['client_need'] or 'No especificada'}
+Público objetivo del cliente: {state['target_audience'] or 'No especificado'}
+Servicio de marketing de interés: {state['service_type']}
+
+Genera el análisis completo. Sé específico para ESTE cliente, no genérico."""),
+    ]
+    response = llm.invoke(messages)
+    return {"market_analysis": response.content}  # Solo escribe su clave</code></pre>
+    </div>
+
+    <div class="reflection-box">
+        <h4>💡 Patrón clave: el agente solo retorna su clave de output</h4>
+        <p>Cada agente recibe el <code>state</code> completo (puede leer todo), pero retorna un diccionario con <strong>únicamente su clave de output</strong>. LangGraph hace el merge automático al estado. Esto evita que los agentes se "pisen" entre sí.</p>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== AGENTE 2 ===== -->
+<section id="agente2">
+    <h2>Parte 4: Agente 2 — Estratega de Marca</h2>
+    <p>Recibe el análisis del Agente 1 y construye la <strong>arquitectura estratégica</strong> que el redactor usará.</p>
+
+    <div class="ai-box">
+        <h4>📊 Framework: Messaging Hierarchy Canvas</h4>
+        <ul>
+            <li><strong>Core Message:</strong> La promesa principal del servicio en términos de resultado de negocio</li>
+            <li><strong>3 Proof Points:</strong> Dato del sector · Metodología diferenciadora · Garantía/KPIs</li>
+            <li><strong>KPIs de Éxito:</strong> Métricas de negocio (conversión, ROI, costo por lead) — no de vanidad</li>
+            <li><strong>Top 3 Objeciones:</strong> Las dudas más comunes del sector con sus contraargumentos</li>
+            <li><strong>Tono Recomendado:</strong> Registro comunicacional ideal para el decisor identificado</li>
+        </ul>
+    </div>
+
+    <div class="agent-step-box">
+        <span class="agent-num">2</span>
+        <h4>Agregar <code>agent_brand_strategist()</code> a app.py</h4>
+<pre><code># ══════════════════════════════════════════════
+# AGENTE 2 — Estratega de Marca y Marketing
+# ══════════════════════════════════════════════
+def agent_brand_strategist(state: MarketingProposalState) -> dict:
+    """Define mensajes clave, propuesta de valor y estrategia persuasiva."""
+    llm = _llm(state["api_key"])  # max_tokens=1500 por defecto
+    messages = [
+        SystemMessage(content="""Eres un estratega de marca y marketing B2B con 12 años de experiencia en agencias digitales de Latinoamérica.
+Tu misión es construir la arquitectura estratégica que el redactor usará para escribir la propuesta.
+
+Aplica el Messaging Hierarchy Canvas:
+
+**Core Message (1 frase):**
+- La promesa principal del servicio para ESTE cliente específico
+- En términos de resultado de negocio, no de característica del servicio
+
+**3 Proof Points (evidencias que sostienen el Core Message):**
+- Proof 1: Dato o tendencia del sector que valida la urgencia
+- Proof 2: Metodología o expertise de la agencia que diferencia
+- Proof 3: Garantía o mecanismo de rendición de cuentas (KPIs)
+
+**KPIs de Éxito (3-5, de negocio):**
+- Métricas que el cliente valorará como evidencia de resultados
+- Priorizar: conversión, costo por lead, ROI, tasa de retención (según servicio)
+- Evitar métricas de vanidad (likes, seguidores) a menos que sean el núcleo del servicio
+
+**Manejo de Objeciones (top 3 del sector):**
+- Objeción → Contraargumento con dato o lógica persuasiva
+
+**Tono Recomendado:**
+- Describir el registro comunicacional ideal para el decisor identificado
+
+Formato: subtítulos en negrita + viñetas. Máximo 520 palabras. Todo en español."""),
+        HumanMessage(content=f"""Con base en este análisis de mercado y cliente:
+
+━━━ ANÁLISIS DE MERCADO (PEST + Pain-Gain-Fear) ━━━
+{state['market_analysis']}
+
+━━━ DATOS DEL SERVICIO ━━━
+Servicio: {state['service_type']}
+Descripción: {state['service_details'] or 'A detallar en kick-off'}
+Inversión: {state['budget_range'] or 'A convenir'}
+Duración: {state['timeline'] or 'A convenir'}
+Agencia: {state['sender_company'] or 'Nuestra agencia'}
+
+Define la estrategia de marca y marketing aplicando el Messaging Hierarchy Canvas.
+El Core Message debe ser específico para {state['client_company']}, no genérico."""),
+    ]
+    response = llm.invoke(messages)
+    return {"brand_strategy": response.content}</code></pre>
+    </div>
+
+    <div class="reflection-box">
+        <h4>💡 El contexto acumulado hace la diferencia</h4>
+        <p>El Agente 2 recibe <code>state['market_analysis']</code> — el output completo del Agente 1 — en su Human Message. Esto es lo que hace que el Agente 2 sea más inteligente: no trabaja en el vacío sino sobre el diagnóstico ya hecho. Cada agente <strong>hereda el conocimiento</strong> de todos los anteriores.</p>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== AGENTE 3 ===== -->
+<section id="agente3">
+    <h2>Parte 5: Agente 3 — Redactor Comercial</h2>
+    <p>El agente más complejo. Integra todo lo anterior en una propuesta de <strong>11 secciones bien estructuradas</strong>.</p>
+
+    <div class="ai-box">
+        <h4>✍️ Framework: StoryBrand Adaptado</h4>
+        <ul>
+            <li><strong>Personaje:</strong> El cliente como protagonista con su situación actual</li>
+            <li><strong>Problema:</strong> El obstáculo de marketing específico que enfrenta</li>
+            <li><strong>Guía:</strong> La agencia como experto que ya resolvió esto antes</li>
+            <li><strong>Plan:</strong> El servicio en fases claras y ejecutables</li>
+            <li><strong>CTA:</strong> Próximos pasos concretos con verbo imperativo</li>
+            <li><strong>Éxito:</strong> Resultados esperados con KPIs de negocio medibles</li>
+        </ul>
+    </div>
+
+    <div class="agent-step-box">
+        <span class="agent-num">3</span>
+        <h4>Agregar <code>agent_proposal_writer()</code> a app.py</h4>
+        <p>Nota: este agente usa <code>max_tokens=3500</code> porque debe producir una propuesta de 850+ palabras.</p>
+<pre><code># ══════════════════════════════════════════════
+# AGENTE 3 — Redactor de Propuesta Comercial
+# ══════════════════════════════════════════════
+def agent_proposal_writer(state: MarketingProposalState) -> dict:
+    """Redacta la propuesta completa usando el framework StoryBrand adaptado."""
+    llm = _llm(state["api_key"], max_tokens=3500)  # Más tokens para propuesta completa
+    messages = [
+        SystemMessage(content="""Eres un redactor comercial senior especializado en propuestas de marketing B2B para empresas latinoamericanas.
+Tu misión es integrar el análisis y la estrategia en una narrativa persuasiva de 11 secciones que motive al decisor a contratar.
+
+Aplica el framework StoryBrand adaptado:
+1. Personaje → El cliente como protagonista con su situación actual
+2. Problema → El obstáculo de marketing específico que enfrenta
+3. Guía → La agencia como experto que ya resolvió esto antes
+4. Plan → El servicio en fases claras y ejecutables
+5. CTA → Próximos pasos concretos con verbo imperativo
+6. Éxito → Resultados esperados con KPIs de negocio medibles
+
+Reglas de redacción:
+- El nombre del cliente aparece al menos 3 veces integrado naturalmente
+- Los beneficios son tangibles y cuantificables (evitar "mejoraremos su presencia")
+- Cada sección prepara lógicamente la siguiente
+- Tono consultivo: enfocado en el cliente, no en la agencia
+- Mínimo 850 palabras en el cuerpo de la propuesta
+- Usa Markdown limpio: ## para secciones, **bold** para énfasis, - para listas
+- Todo en español."""),
+        HumanMessage(content=f"""Redacta una propuesta comercial de marketing completa usando:
+
+━━━ ANÁLISIS DE MERCADO Y CLIENTE ━━━
+{state['market_analysis']}
+
+━━━ ESTRATEGIA DE MARCA Y MARKETING ━━━
+{state['brand_strategy']}
+
+━━━ DATOS ESPECÍFICOS ━━━
+- Empresa cliente: {state['client_company']}
+- Contacto: {state['client_name']}
+- Servicio de marketing: {state['service_type']}
+- Descripción: {state['service_details'] or 'A detallar en reunión de kick-off'}
+- Inversión: {state['budget_range'] or 'A convenir'}
+- Duración: {state['timeline'] or 'A convenir'}
+- Remitente: {state['sender_name'] or ''}{(', ' + state['sender_role']) if state['sender_role'] else ''} — {state['sender_company'] or ''}
+- Contacto remitente: {state['sender_contact'] or ''}
+- Fecha: {state['today']}
+
+La propuesta DEBE incluir TODAS estas secciones en orden:
+1. Encabezado formal (remitente, destinatario, fecha, N° propuesta)
+2. Resumen Ejecutivo
+3. Entendimiento del Cliente y su Mercado
+4. Solución de Marketing Propuesta
+5. Por Qué Esta Estrategia Funciona Para {state['client_company']}
+6. Metodología y Plan de Acción (fases y actividades)
+7. Entregables y Resultados Esperados (con KPIs)
+8. Cronograma de Implementación
+9. Inversión y Condiciones de Pago
+10. Próximos Pasos (llamada a la acción)
+11. Cierre y Firma"""),
+    ]
+    response = llm.invoke(messages)
+    return {"proposal_draft": response.content}</code></pre>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== AGENTE 4 ===== -->
+<section id="agente4">
+    <h2>Parte 6: Agente 4 — Editor Senior</h2>
+    <p>El último agente. Recibe el borrador y lo <strong>pule hasta dejarlo listo para enviar</strong> al cliente.</p>
+
+    <div class="ai-box">
+        <h4>✅ Rúbrica PACT</h4>
+        <ul>
+            <li><strong>P — Personalización:</strong> ¿Parece escrita para ESTE cliente específico?</li>
+            <li><strong>A — Accionabilidad:</strong> ¿El cliente sabe exactamente qué hacer después de leerla?</li>
+            <li><strong>C — Claridad:</strong> ¿Cada sección puede leerse en 60 segundos?</li>
+            <li><strong>T — Tono:</strong> ¿Es consultivo (orientado al cliente) o vendedor (orientado a la agencia)?</li>
+        </ul>
+    </div>
+
+    <div class="agent-step-box">
+        <span class="agent-num">4</span>
+        <h4>Agregar <code>agent_editor()</code> a app.py</h4>
+        <p>Nota: usa <code>max_tokens=4096</code> porque debe devolver la propuesta completa mejorada.</p>
+<pre><code># ══════════════════════════════════════════════
+# AGENTE 4 — Editor Senior y Revisor de Calidad
+# ══════════════════════════════════════════════
+def agent_editor(state: MarketingProposalState) -> dict:
+    """Revisa y pule la propuesta aplicando la rúbrica PACT."""
+    llm = _llm(state["api_key"], max_tokens=4096)  # Máximo para devolver propuesta completa
+    messages = [
+        SystemMessage(content="""Eres un editor senior de comunicación comercial con 18 años de experiencia en marketing B2B latinoamericano.
+Tu misión es elevar el borrador a una propuesta lista para enviar, aplicando la rúbrica PACT:
+
+**P — Personalización:**
+¿Parece escrita para ESTE cliente específico? El sector, el pain point y el nombre deben estar integrados naturalmente.
+
+**A — Accionabilidad:**
+¿El cliente sabe exactamente qué hacer después de leerla? Los Próximos Pasos deben tener verbo imperativo y un plazo sugerido.
+
+**C — Claridad:**
+¿Cada sección puede leerse en 60 segundos? Elimina frases vagas, jerga innecesaria y superlativos vacíos.
+
+**T — Tono:**
+¿Es consultivo (orientado al cliente) o vendedor (orientado a la agencia)? Ajusta hacia consultivo.
+
+Checklist final antes de entregar:
+- Las 11 secciones están presentes y en orden
+- Los KPIs son de negocio (no solo de vanidad)
+- La inversión tiene condiciones de pago explícitas
+- El cronograma usa fases relativas (Semana 1, Mes 2...)
+- El Markdown es consistente: ## secciones, **bold** énfasis, - listas
+
+REGLA CRÍTICA: Devuelve la propuesta COMPLETA y mejorada. NUNCA recortes contenido."""),
+        HumanMessage(content=f"""Revisa y mejora esta propuesta de marketing aplicando la rúbrica PACT:
+
+{state['proposal_draft']}
+
+━━━ CRITERIOS DE REVISIÓN ━━━
+1. **Personalización:** ¿{state['client_company']} y su sector están integrados naturalmente en cada sección?
+2. **Beneficios:** ¿Son concretos, medibles y relevantes para {state['client_industry'] or 'su sector'}?
+3. **Estrategia integrada:** ¿Los mensajes clave del Estratega están bien reflejados en la propuesta?
+4. **Tono consultivo:** ¿El lenguaje está orientado al cliente, no a la agencia?
+5. **CTA activo:** ¿"Próximos Pasos" tiene un verbo imperativo y un plazo sugerido?
+6. **Markdown limpio:** ¿El formato es consistente y profesional?
+
+Entrega la versión final COMPLETA, lista para enviar a {state['client_name']} de {state['client_company']}."""),
+    ]
+    response = llm.invoke(messages)
+    return {"final_proposal": response.content}</code></pre>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== GRAFO ===== -->
+<section id="grafo">
+    <h2>Parte 7: Construir el Grafo LangGraph</h2>
+    <p>Aquí conectamos los 4 agentes en una cadena ordenada.</p>
+
+    <div class="python-step-box">
+        <span class="python-step-num">1</span>
+        <h4>Agregar <code>build_graph()</code> y las constantes de la UI</h4>
+<pre><code># ══════════════════════════════════════════════
+# CONSTRUCCIÓN DEL GRAFO LANGGRAPH
+# ══════════════════════════════════════════════
+def build_graph():
+    """Construye y compila el grafo de agentes con LangGraph."""
+    graph = StateGraph(MarketingProposalState)
+
+    # Registrar los 4 nodos (agentes)
+    graph.add_node("analyst",    agent_market_analyst)
+    graph.add_node("strategist", agent_brand_strategist)
+    graph.add_node("writer",     agent_proposal_writer)
+    graph.add_node("editor",     agent_editor)
+
+    # Definir el nodo de entrada
+    graph.set_entry_point("analyst")
+
+    # Definir el flujo: analyst → strategist → writer → editor → FIN
+    graph.add_edge("analyst",    "strategist")
+    graph.add_edge("strategist", "writer")
+    graph.add_edge("writer",     "editor")
+    graph.add_edge("editor",     END)
+
+    return graph.compile()  # Congela y compila el grafo
+
+
+# Constantes para la UI de Streamlit
+AGENT_LABELS = {
+    "analyst":    "🔍 Agente 1: Analista de Mercado",
+    "strategist": "📊 Agente 2: Estratega de Marca",
+    "writer":     "✍️ Agente 3: Redactor Comercial",
+    "editor":     "✅ Agente 4: Editor Senior",
+}
+AGENT_DESCRIPTIONS = {
+    "analyst":    "Analiza al cliente, su mercado, pain points y oportunidades.",
+    "strategist": "Define mensajes clave, propuesta de valor y estrategia persuasiva.",
+    "writer":     "Redacta la propuesta completa con todas sus secciones formales.",
+    "editor":     "Revisa, mejora y pule la propuesta para máximo impacto.",
+}
+OUTPUT_KEYS = {
+    "analyst":    "market_analysis",
+    "strategist": "brand_strategy",
+    "writer":     "proposal_draft",
+    "editor":     "final_proposal",
+}</code></pre>
+    </div>
+
+    <div class="lang-box">
+        <h4>🔗 ¿Cómo funciona <code>graph.stream()</code>?</h4>
+        <p>Cuando llamas <code>graph.stream(estado_inicial)</code>, LangGraph ejecuta cada nodo en orden y va <em>emitiendo</em> el resultado de cada uno a medida que termina. Esto permite a Streamlit mostrar el progreso en tiempo real: el usuario ve al Agente 1 terminar, luego el 2, etc., sin esperar a que todo el pipeline finalice.</p>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== UI ===== -->
+<section id="ui">
+    <h2>Parte 8: Interfaz Streamlit</h2>
+    <p>La capa visual que une todo. Va después de las constantes en <code>app.py</code>.</p>
+
+    <div class="python-step-box">
+        <span class="python-step-num">1</span>
+        <h4>Configuración de página y CSS personalizado</h4>
+<pre><code># ──────────────────────────────────────────────
+# Configuración de página (DEBE IR PRIMERO)
+# ──────────────────────────────────────────────
+st.set_page_config(
+    page_title="Equipo de Agentes de Marketing | LangGraph + Claude",
+    page_icon="🎯",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# CSS personalizado
+st.markdown("""
+&lt;style&gt;
+    .main-title {
+        background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+        color: white; padding: 30px 40px; border-radius: 12px;
+        text-align: center; margin-bottom: 30px;
+    }
+    .main-title h1 { color: white; margin: 0 0 10px 0; font-size: 2em; }
+    .main-title p  { color: #a8d8ea; margin: 0; font-size: 1.05em; }
+    .agent-card {
+        background: #f8f9fa; border: 1px solid #e0e0e0;
+        border-radius: 8px; padding: 12px 16px; margin: 8px 0;
+    }
+    .agent-card h4 { color: #0f3460; margin: 0 0 4px 0; font-size: 0.95em; }
+    .agent-card p  { color: #666; margin: 0; font-size: 0.82em; }
+    .proposal-box {
+        background: #f9fafb; border: 1px solid #d0d7de;
+        border-radius: 10px; padding: 30px 35px; line-height: 1.8; font-size: 1em;
+    }
+    .info-card {
+        background: #e8f4f8; border-left: 5px solid #0f3460;
+        border-radius: 6px; padding: 14px 20px; margin-bottom: 20px;
+        font-size: 0.92em; color: #1a2f4b;
+    }
+    .success-banner {
+        background: #d4edda; border-left: 5px solid #27ae60;
+        border-radius: 6px; padding: 14px 20px; color: #155724;
+        font-weight: 500; margin-bottom: 20px;
+    }
+&lt;/style&gt;
+""", unsafe_allow_html=True)</code></pre>
+    </div>
+
+    <div class="python-step-box">
+        <span class="python-step-num">2</span>
+        <h4>Título principal y Sidebar</h4>
+<pre><code># Título principal
+st.markdown("""
+&lt;div class="main-title"&gt;
+    &lt;h1&gt;🎯 Equipo de Agentes de Marketing&lt;/h1&gt;
+    &lt;p&gt;4 agentes especializados orquestados con &lt;strong&gt;LangGraph&lt;/strong&gt; + &lt;strong&gt;Claude de Anthropic&lt;/strong&gt;&lt;br&gt;
+    trabajan en cadena para generar tu propuesta comercial de marketing de alta calidad.&lt;/p&gt;
+&lt;/div&gt;
+""", unsafe_allow_html=True)
+
+# Barra lateral
+with st.sidebar:
+    st.header("⚙️ Configuración")
+    api_key_input = st.text_input(
+        "API Key de Anthropic",
+        type="password",
+        placeholder="sk-ant-...",
+        help="Ingresa tu API Key o defínela en el archivo .env",
+    )
+    st.markdown("---")
+    st.markdown("**🤖 Equipo de Agentes:**")
+    for key, label in AGENT_LABELS.items():
+        st.markdown(
+            f'&lt;div class="agent-card"&gt;&lt;h4&gt;{label}&lt;/h4&gt;&lt;p&gt;{AGENT_DESCRIPTIONS[key]}&lt;/p&gt;&lt;/div&gt;',
+            unsafe_allow_html=True,
+        )
+    st.markdown("---")
+    st.markdown("**Orquestación:** LangGraph  \n**Modelo:** claude-haiku-4-5-20251001  \n**Flujo:** Analyst → Strategist → Writer → Editor")
+    st.caption("2026 - Ing. Julian Andres Quimbayo Castro")</code></pre>
+    </div>
+
+    <div class="python-step-box">
+        <span class="python-step-num">3</span>
+        <h4>Formulario de entrada de datos</h4>
+<pre><code>st.subheader("📋 Información para la Propuesta de Marketing")
+st.markdown(
+    '&lt;div class="info-card"&gt;Completa los datos del cliente y el servicio. '
+    "El equipo de agentes usará esta información para generar una propuesta estratégica y personalizada.&lt;/div&gt;",
+    unsafe_allow_html=True,
+)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("#### 👤 Datos del Cliente")
+    client_name     = st.text_input("Nombre del contacto *", placeholder="Ej: María García")
+    client_company  = st.text_input("Nombre de la empresa *", placeholder="Ej: Tech Solutions S.A.S.")
+    client_industry = st.text_input("Sector o industria", placeholder="Ej: Tecnología, Salud, Retail...")
+    target_audience = st.text_input("Público objetivo del cliente",
+                                    placeholder="Ej: Mujeres de 25-40 años, profesionales urbanas")
+    client_need     = st.text_area("Problema o necesidad de marketing",
+                                   placeholder="Ej: Poca visibilidad online, redes sociales inactivas...",
+                                   height=100)
+
+with col2:
+    st.markdown("#### 🎯 Servicio de Marketing")
+    service_type = st.selectbox(
+        "Tipo de servicio *",
+        options=[
+            "Selecciona un servicio...",
+            "Gestión de Redes Sociales",
+            "Estrategia de Marketing Digital",
+            "Branding e Identidad de Marca",
+            "Campaña Publicitaria (Meta / Google Ads)",
+            "Posicionamiento SEO / SEM",
+            "Marketing de Contenidos",
+            "Email Marketing y Automatización",
+            "Diseño Web y Landing Pages",
+            "Consultoría de Marketing",
+            "Plan de Marketing Integral",
+        ],
+    )
+    service_details = st.text_area("Descripción del servicio",
+                                   placeholder="Ej: Gestión mensual de Instagram y Facebook...",
+                                   height=100)
+    budget_range = st.text_input("Inversión mensual / total",
+                                  placeholder="Ej: $2.500.000 COP / mes")
+    timeline     = st.text_input("Duración del proyecto",
+                                  placeholder="Ej: Contrato inicial de 3 meses")
+
+st.markdown("#### 🏢 Tu Agencia / Empresa (quien envía la propuesta)")
+col3, col4 = st.columns(2)
+with col3:
+    sender_company = st.text_input("Nombre de tu agencia", placeholder="Ej: CreativeHub Colombia")
+    sender_name    = st.text_input("Tu nombre completo",   placeholder="Ej: Carlos Rodríguez")
+with col4:
+    sender_role    = st.text_input("Tu cargo",             placeholder="Ej: Director de Cuentas")
+    sender_contact = st.text_input("Correo / Teléfono",    placeholder="Ej: carlos@creativehub.co")
+
+st.markdown("---")</code></pre>
+    </div>
+
+    <div class="python-step-box">
+        <span class="python-step-num">4</span>
+        <h4>Lógica de generación con el pipeline</h4>
+<pre><code>generate_btn = st.button("🚀 Activar Equipo de Agentes", type="primary", use_container_width=True)
+
+if generate_btn:
+    # Validar campos obligatorios
+    missing = []
+    if not client_name:    missing.append("Nombre del contacto")
+    if not client_company: missing.append("Nombre de la empresa")
+    if service_type == "Selecciona un servicio...": missing.append("Tipo de servicio")
+
+    if missing:
+        st.error(f"⚠️ Completa los campos obligatorios (*): {', '.join(missing)}")
+    else:
+        api_key = api_key_input.strip() or os.getenv("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            st.error("⚠️ Ingresa tu API Key en la barra lateral o defínela en el archivo `.env`.")
+        else:
+            # Construir el estado inicial del grafo
+            initial_state: MarketingProposalState = {
+                "api_key":        api_key,
+                "client_name":    client_name,
+                "client_company": client_company,
+                "client_industry": client_industry,
+                "client_need":    client_need,
+                "target_audience": target_audience,
+                "service_type":   service_type,
+                "service_details": service_details,
+                "budget_range":   budget_range,
+                "timeline":       timeline,
+                "sender_company": sender_company,
+                "sender_name":    sender_name,
+                "sender_role":    sender_role,
+                "sender_contact": sender_contact,
+                "today":          date.today().strftime("%d de %B de %Y"),
+                "market_analysis": "",
+                "brand_strategy":  "",
+                "proposal_draft":  "",
+                "final_proposal":  "",
+            }
+
+            graph = build_graph()
+            final_proposal = ""
+
+            try:
+                # Ejecutar el grafo y mostrar el progreso en tiempo real
+                with st.status("🤖 Equipo de agentes de marketing trabajando...", expanded=True) as main_status:
+                    for step in graph.stream(initial_state):
+                        for node_name, node_output in step.items():
+                            if node_name not in AGENT_LABELS:
+                                continue
+                            content = node_output.get(OUTPUT_KEYS[node_name], "")
+                            st.markdown(f"**{AGENT_LABELS[node_name]}** — ✅ Completado")
+                            with st.expander(f"Ver output → {AGENT_LABELS[node_name]}", expanded=False):
+                                st.markdown(content)
+                            if node_name == "editor":
+                                final_proposal = content
+
+                    main_status.update(label="✅ ¡El equipo de agentes completó la propuesta!", state="complete")
+
+                if final_proposal:
+                    st.session_state["proposal"]        = final_proposal
+                    st.session_state["proposal_client"] = client_company
+
+            except Exception as e:
+                err = str(e).lower()
+                if "authentication" in err or "api_key" in err or "invalid" in err:
+                    st.error("❌ API Key inválida. Verifica en console.anthropic.com.")
+                elif "rate" in err or "quota" in err:
+                    st.error("❌ Límite de uso alcanzado. Espera unos minutos e intenta de nuevo.")
+                else:
+                    st.error(f"❌ Error inesperado: {e}")</code></pre>
+    </div>
+
+    <div class="python-step-box">
+        <span class="python-step-num">5</span>
+        <h4>Mostrar la propuesta y botones de descarga</h4>
+<pre><code>if "proposal" in st.session_state:
+    st.markdown("---")
+    st.markdown(
+        '&lt;div class="success-banner"&gt;✅ ¡Propuesta generada por el equipo de agentes! Revísala, edítala o descárgala.&lt;/div&gt;',
+        unsafe_allow_html=True,
+    )
+
+    tab1, tab2 = st.tabs(["📄 Vista Formateada", "📝 Texto Plano (copiar / editar)"])
+
+    with tab1:
+        st.markdown('&lt;div class="proposal-box"&gt;', unsafe_allow_html=True)
+        st.markdown(st.session_state["proposal"])
+        st.markdown("&lt;/div&gt;", unsafe_allow_html=True)
+
+    with tab2:
+        st.text_area(
+            "Propuesta en texto plano:",
+            value=st.session_state["proposal"],
+            height=600,
+            label_visibility="collapsed",
+        )
+
+    filename = (
+        "propuesta_marketing_"
+        + st.session_state.get("proposal_client", "cliente").replace(" ", "_").lower()
+        + ".md"
+    )
+    col_dl1, col_dl2 = st.columns(2)
+    with col_dl1:
+        st.download_button(
+            label="⬇️ Descargar Propuesta (.md)",
+            data=st.session_state["proposal"].encode("utf-8"),
+            file_name=filename,
+            mime="text/markdown",
+            use_container_width=True,
+        )
+    with col_dl2:
+        pdf_bytes = generate_pdf(
+            st.session_state["proposal"],
+            st.session_state.get("proposal_client", "cliente"),
+        )
+        st.download_button(
+            label="⬇️ Descargar Propuesta (.pdf)",
+            data=pdf_bytes,
+            file_name=filename.replace(".md", ".pdf"),
+            mime="application/pdf",
+            use_container_width=True,
+        )</code></pre>
+    </div>
+
+    <div class="success-box">
+        <h4>✅ app.py completo</h4>
+        <p>Ya tienes todas las partes de <code>app.py</code>. La estructura final del archivo es:</p>
+        <ul>
+            <li>Importaciones + <code>load_dotenv()</code></li>
+            <li><code>MarketingProposalState</code> (TypedDict)</li>
+            <li><code>_llm()</code> + <code>_inline_md()</code> + <code>generate_pdf()</code></li>
+            <li><code>agent_market_analyst()</code></li>
+            <li><code>agent_brand_strategist()</code></li>
+            <li><code>agent_proposal_writer()</code></li>
+            <li><code>agent_editor()</code></li>
+            <li><code>build_graph()</code> + constantes</li>
+            <li>Código Streamlit: <code>set_page_config()</code>, CSS, sidebar, formulario, botón, lógica, resultados</li>
+        </ul>
+    </div>
+
+    <div class="file-tree">
+        <span class="folder">📁 agente-marketing/</span><br>
+        <span class="folder">&nbsp;&nbsp;📁 venv/</span><br>
+        <span class="folder">&nbsp;&nbsp;📁 .claude/</span><br>
+        <span class="file">&nbsp;&nbsp;📄 app.py</span><br>
+        <span class="file">&nbsp;&nbsp;📄 CLAUDE.md</span><br>
+        <span class="file">&nbsp;&nbsp;📄 _check.py</span><br>
+        <span class="file">&nbsp;&nbsp;📄 _writer.py</span><br>
+        <span class="file">&nbsp;&nbsp;📄 requirements.txt</span><br>
+        <span class="file">&nbsp;&nbsp;📄 .env</span><br>
+        <span class="file">&nbsp;&nbsp;📄 .env.example</span><br>
+        <span class="file">&nbsp;&nbsp;📄 .gitignore</span>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== EJECUCIÓN ===== -->
+<section id="ejecucion">
+    <h2>Ejecutar la Aplicación</h2>
+
+    <div class="step-box">
+        <span class="step-num">1</span>
+        <h4>Asegúrate de que el entorno virtual está activo</h4>
+        <p>Debes ver <code>(venv)</code> en el prompt de la terminal:</p>
+<pre><code>.\venv\Scripts\Activate.ps1</code></pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">2</span>
+        <h4>Lanzar la app con Streamlit</h4>
+<pre><code>streamlit run app.py</code></pre>
+    </div>
+
+    <div class="success-box">
+        <h4>✅ Resultado esperado en la terminal</h4>
+    </div>
+    <div class="terminal-output">
+        <span class="output">&nbsp;</span><br>
+        <span class="success">&nbsp;&nbsp;You can now view your Streamlit app in your browser.</span><br><br>
+        <span class="output">&nbsp;&nbsp;Local URL: http://localhost:8501</span><br>
+        <span class="output">&nbsp;&nbsp;Network URL: http://192.168.x.x:8501</span>
+    </div>
+
+    <div class="step-box">
+        <span class="step-num">3</span>
+        <h4>Usar la aplicación</h4>
+        <p>El navegador se abrirá automáticamente en <code>http://localhost:8501</code>. Sigue estos pasos:</p>
+        <ol>
+            <li>Ingresa tu API Key en la barra lateral (o ya está en <code>.env</code>)</li>
+            <li>Completa los datos del cliente (nombre, empresa, sector)</li>
+            <li>Selecciona el tipo de servicio de marketing</li>
+            <li>Completa los datos de tu agencia (opcional pero recomendado)</li>
+            <li>Haz clic en <strong>"🚀 Activar Equipo de Agentes"</strong></li>
+            <li>Observa cómo cada agente trabaja en tiempo real</li>
+            <li>Descarga la propuesta en <code>.md</code> o <code>.pdf</code></li>
+        </ol>
+    </div>
+
+    <div class="terminal-output">
+        <span class="warning">🤖 Equipo de agentes de marketing trabajando...</span><br><br>
+        <span class="success">🔍 Agente 1: Analista de Mercado — ✅ Completado</span><br>
+        <span class="output">&nbsp;&nbsp;&nbsp;[Ver output → Agente 1 ▼]</span><br><br>
+        <span class="success">📊 Agente 2: Estratega de Marca — ✅ Completado</span><br>
+        <span class="output">&nbsp;&nbsp;&nbsp;[Ver output → Agente 2 ▼]</span><br><br>
+        <span class="success">✍️ Agente 3: Redactor Comercial — ✅ Completado</span><br>
+        <span class="output">&nbsp;&nbsp;&nbsp;[Ver output → Agente 3 ▼]</span><br><br>
+        <span class="success">✅ Agente 4: Editor Senior — ✅ Completado</span><br>
+        <span class="output">&nbsp;&nbsp;&nbsp;[Ver output → Agente 4 ▼]</span><br><br>
+        <span class="success">✅ ¡El equipo de agentes completó la propuesta!</span>
+    </div>
+
+    <h3>📋 Datos de Prueba</h3>
+    <p>Usa estos datos para hacer tu primera prueba:</p>
+    <div class="table-responsive">
+        <table class="styled-table">
+            <thead><tr><th>Campo</th><th>Valor de prueba</th></tr></thead>
+            <tbody>
+                <tr><td>Nombre del contacto</td><td>María García</td></tr>
+                <tr><td>Nombre de la empresa</td><td>Tech Solutions S.A.S.</td></tr>
+                <tr><td>Sector</td><td>Tecnología</td></tr>
+                <tr><td>Público objetivo</td><td>Empresas medianas de manufactura</td></tr>
+                <tr><td>Necesidad</td><td>Sin estrategia digital definida, baja generación de leads</td></tr>
+                <tr><td>Tipo de servicio</td><td>Estrategia de Marketing Digital</td></tr>
+                <tr><td>Inversión</td><td>$3.000.000 COP / mes</td></tr>
+                <tr><td>Duración</td><td>6 meses</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== TROUBLESHOOTING ===== -->
+<section id="troubleshooting">
+    <h2>Solución de Problemas</h2>
+
+    <div class="table-responsive">
+        <table class="styled-table">
+            <thead>
+                <tr><th>Error</th><th>Causa</th><th>Solución</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ModuleNotFoundError: langchain_anthropic</code></td>
+                    <td>Entorno virtual no activo o paquete no instalado</td>
+                    <td>Activa el venv con <code>.\venv\Scripts\Activate.ps1</code> y ejecuta <code>pip install -r requirements.txt</code></td>
+                </tr>
+                <tr>
+                    <td><code>AuthenticationError</code></td>
+                    <td>API Key inválida o no configurada</td>
+                    <td>Verifica el archivo <code>.env</code> o ingresa la clave manualmente en la barra lateral</td>
+                </tr>
+                <tr>
+                    <td><code>RateLimitError</code></td>
+                    <td>Demasiadas llamadas a la API</td>
+                    <td>Espera 1 minuto y vuelve a intentar. El pipeline hace 4 llamadas consecutivas.</td>
+                </tr>
+                <tr>
+                    <td>Streamlit muestra pantalla en blanco</td>
+                    <td><code>st.set_page_config()</code> no está al inicio</td>
+                    <td>Esta línea DEBE ser la primera instrucción de Streamlit en el archivo, antes de cualquier widget</td>
+                </tr>
+                <tr>
+                    <td><code>OverflowError</code> en PDF</td>
+                    <td>Caracteres especiales no escapados en ReportLab</td>
+                    <td>La función <code>_inline_md()</code> ya escapa <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>. Verifica que se llame correctamente.</td>
+                </tr>
+                <tr>
+                    <td>La propuesta está incompleta (falta secciones)</td>
+                    <td>El Agente 3 excedió el límite de tokens</td>
+                    <td>Aumenta <code>max_tokens</code> del Agente 3 de 3500 a 4096 en <code>_llm()</code></td>
+                </tr>
+                <tr>
+                    <td><code>PowerShell: cannot be loaded...</code> al activar venv</td>
+                    <td>Política de ejecución de scripts en Windows</td>
+                    <td>Ejecuta en PowerShell como Administrador: <code>Set-ExecutionPolicy RemoteSigned</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>💡 Tips de Depuración</h3>
+    <div class="strategy-grid">
+        <div class="strategy-box">
+            <h5>🔍 Ver outputs intermedios</h5>
+            <p>Expande los colapsables de cada agente en la UI para ver exactamente qué produjo el Analista, el Estratega y el Redactor antes del Editor.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>💰 Controlar costos</h5>
+            <p>Cada generación hace 4 llamadas a Claude Haiku. El costo total por propuesta es ~$0.01-0.02 USD. Monitorea en <a href="https://console.anthropic.com/settings/usage" target="_blank">console.anthropic.com/settings/usage</a>.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>🔑 Verificar la API Key</h5>
+            <p>En PowerShell: <code>echo $env:ANTHROPIC_API_KEY</code>. Debe mostrar tu clave. Si muestra vacío, el archivo <code>.env</code> no fue cargado.</p>
+        </div>
+        <div class="strategy-box">
+            <h5>📦 Verificar versiones</h5>
+<pre style="margin:8px 0;font-size:0.85em;"><code>pip show langgraph
+pip show langchain-anthropic</code></pre>
+            <p>Deben mostrar versiones ≥ 0.2.0 y ≥ 0.3.0 respectivamente.</p>
+        </div>
+    </div>
+</section>
+
+<hr class="divider-thick">
+
+<!-- ===== RETO ===== -->
+<section id="reto">
+    <h2>Reto Final — Extiende el Pipeline</h2>
+    <p>Ya tienes un sistema multi-agente funcional. ¡Ahora mejóralo!</p>
+
+    <div class="strategy-grid">
+        <div class="strategy-box" style="border-left-color:var(--accent-orange);">
+            <h5>🌐 Reto 1: Agente 5 — Traductor</h5>
+            <p>Agrega un 5° agente que traduzca la propuesta final al inglés:</p>
+            <ul>
+                <li>Crear <code>agent_translator(state)</code></li>
+                <li>Agregar clave <code>translated_proposal: str</code> al TypedDict</li>
+                <li>Agregar nodo y edge en <code>build_graph()</code></li>
+                <li>Mostrar la versión en inglés en una 3ª pestaña</li>
+            </ul>
+        </div>
+        <div class="strategy-box" style="border-left-color:var(--accent-orange);">
+            <h5>💾 Reto 2: Historial de Propuestas</h5>
+            <p>Guarda todas las propuestas generadas en la sesión:</p>
+            <ul>
+                <li>Usar <code>st.session_state["history"]</code> como lista</li>
+                <li>Agregar cada propuesta con su cliente y fecha</li>
+                <li>Mostrar historial en la barra lateral con botones de descarga</li>
+            </ul>
+        </div>
+        <div class="strategy-box" style="border-left-color:var(--accent-orange);">
+            <h5>📊 Reto 3: Score de Calidad</h5>
+            <p>Agrega un agente evaluador que califique la propuesta:</p>
+            <ul>
+                <li>Crea <code>agent_scorer(state)</code></li>
+                <li>Puntúa de 1-10 cada criterio PACT</li>
+                <li>Responde en JSON: <code>{"P": 8, "A": 7, "C": 9, "T": 8}</code></li>
+                <li>Muestra un medidor visual en Streamlit</li>
+            </ul>
+        </div>
+        <div class="strategy-box" style="border-left-color:var(--accent-orange);">
+            <h5>🔄 Reto 4: Flujo Condicional</h5>
+            <p>Si el puntaje PACT es menor a 7 en algún criterio, re-ejecutar el editor:</p>
+            <ul>
+                <li>Usar <code>graph.add_conditional_edges()</code> de LangGraph</li>
+                <li>Máximo 2 iteraciones para evitar bucle infinito</li>
+                <li>Agregar contador <code>revision_count: int</code> al estado</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="success-box">
+        <h4>🎉 ¿Qué Has Logrado?</h4>
+        <ul>
+            <li>Construiste un <strong>sistema multi-agente real</strong> con 4 agentes especializados</li>
+            <li>Usaste <strong>LangGraph</strong> para orquestar un grafo de estados</li>
+            <li>Diseñaste <strong>prompts con frameworks profesionales</strong> (PEST, StoryBrand, PACT)</li>
+            <li>Creaste una <strong>interfaz web completa</strong> con Streamlit, incluyendo progreso en tiempo real</li>
+            <li>Implementaste <strong>generación de PDF</strong> con estilos corporativos usando ReportLab</li>
+            <li>Aplicaste <strong>buenas prácticas de seguridad</strong>: API Key en variables de entorno, nunca en código</li>
+        </ul>
+    </div>
+
+    <h3>🚀 Próximos Pasos</h3>
+    <div class="strategy-grid">
+        <div class="strategy-box">
+            <h5>🔁 LangGraph Avanzado</h5>
+            <ul>
+                <li>Flujos condicionales con <code>add_conditional_edges()</code></li>
+                <li>Grafos cíclicos con condición de parada</li>
+                <li>Subgrafos y agentes paralelos</li>
+            </ul>
+        </div>
+        <div class="strategy-box">
+            <h5>🧰 Tool Use con Claude</h5>
+            <ul>
+                <li>Agentes con herramientas: búsqueda web, calculadoras</li>
+                <li>Claude decide cuándo y cómo usar cada herramienta</li>
+                <li>Integración con APIs externas (CRM, correo)</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+</div>
+</main>
+
+<footer class="main-footer">
+    <div class="container">
+        <p><strong>Corporación Universitaria del Huila — CORHUILA</strong></p>
+        <p>Software y Automatización — Ingeniería Mecatrónica</p>
+        <p>Tutorial: Generador de Propuestas de Marketing con Multi-Agentes IA</p>
+        <ul>
+            <li><a href="../01-session/agente-organizador-archivos-python-anthropic.html">← Tutorial Anterior: Agente Organizador de Archivos</a></li>
+        </ul>
+    </div>
+</footer>
+
+<button id="scrollTopBtn" title="Volver arriba">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const scrollBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', function() {
+        scrollBtn.style.display = (document.documentElement.scrollTop > 300) ? 'block' : 'none';
+    });
+    scrollBtn.addEventListener('click', function() { document.documentElement.scrollTop = 0; });
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    window.addEventListener('scroll', function() {
+        const navLinks = document.querySelectorAll('.main-nav a');
+        let current = '';
+        document.querySelectorAll('section').forEach(section => {
+            if (pageYOffset >= section.offsetTop - 200) current = section.getAttribute('id');
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('pre').forEach(pre => {
+        const btn = document.createElement('button');
+        btn.textContent = '📋 Copiar';
+        btn.style.cssText = 'position:absolute;right:10px;top:10px;padding:6px 10px;background:#27ae60;color:white;border:none;border-radius:4px;cursor:pointer;font-size:11px;opacity:0;transition:opacity 0.3s;z-index:10;';
+        pre.style.position = 'relative';
+        pre.appendChild(btn);
+        pre.addEventListener('mouseenter', () => btn.style.opacity = '1');
+        pre.addEventListener('mouseleave', () => btn.style.opacity = '0');
+        btn.addEventListener('click', () => {
+            const code = pre.querySelector('code') ? pre.querySelector('code').innerText : pre.innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = '✅ Copiado!';
+                btn.style.background = '#2196F3';
+                setTimeout(() => { btn.textContent = '📋 Copiar'; btn.style.background = '#27ae60'; }, 2000);
+            });
+        });
+    });
+});
+</script>
+</body>
+</html>
