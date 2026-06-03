@@ -153,6 +153,7 @@ Este repositorio fue creado por los siguientes ingenieros pertenecientes al grup
 | Ing. Julian Andres Quimbayo Castro | julian.quimbayo@corhuila.edu.co |
 | Ing. Alvaro Hernan Alarcon Lopez | alvaro.alarcon@corhuila.edu.co |
 | Ing. Jose Miguel Llanos Mosquera | jmllanosm@corhuila.edu.co |
+| Est. Brayan Smith Bedoya Montealegre | bsbedoya-2023a@corhuila.edu.co |
 
 <p align="center">
   <strong>Grupo de Investigación INPROTI</strong><br/>
